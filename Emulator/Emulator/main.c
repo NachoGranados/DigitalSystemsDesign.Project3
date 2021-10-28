@@ -2,51 +2,43 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-
-#include <sys/stat.h>
-
-
-
-
-
-//#define MAXC 1024       /* if you need a constant, #define one (or more) */
-//#define NPTRS   2
-
-
-
-
-
-
-// Constants
-const int MAX_CHARACTERS = 1024;
+// Read file constants
+const int MAX_CHARACTERS = 34;
 const int NUMBER_POINTERS = 2;
 
+// Instruction constant
+const int INSTRUCTION_LENGHT = 32;
 const int OPCODE_LENGHT = 6;
 
+// Instruction R and I constants
+const int RS_LENGHT = 5;
+const int RT_LENGHT = 5;
+
+// Instruction R constants
+const int RD_LENGHT = 5;
+const int SHAMT_LENGHT = 5;
+const int FUNCT_LENGHT = 6;
+
+// Instruction I constant
+const int IMMEDIATE_LENGHT = 16;
+
+// Instruction J constant
+const int ADDRESS_LENGHT = 26;
 
 
-typedef struct {
-
-    char *line;
-
-} Instruction;
 
 
 
+// Global variables
+int PC = 0;
 
 
-void instructionR () {
 
-}
 
-void instructionI () {
 
-}
 
-void instructionJ () {
 
-}
+
 
 
 
@@ -64,101 +56,21 @@ void instructionJ () {
 
 
 /*
-int fileSize(char* file) {
 
-    FILE *fp = fopen(file, "r");
+int add(int rs, int rs) {
 
-    int size = 0;
+    int rd = 0;
 
-    if (fp != NULL) {
+    ...
 
-        char buffer[LINE_LENGTH];
-        //char *buffer;
-
-        // read file line by line
-        while(fgets(buffer, LINE_LENGTH, fp)) {
-
-            size++;
-
-        }
-
-    } else {
-
-        printf("Error: could not open text file %s", file);
-
-    }
-
-    // close the file
-    fclose(fp);
-
-    return size;
+    return rd;
 
 }
 
 
-void readDataFile(char *file) {
 
-    FILE *fp = fopen(file, "r");
+int sub(inta, int b..) {}
 
-    if (fp != NULL) {
-
-        // read file line by line
-        const unsigned MAX_LENGTH = 256;
-
-        char buffer[MAX_LENGTH];
-
-        while(fgets(buffer, MAX_LENGTH, fp)) {
-
-            printf("%s", buffer);
-
-        }
-
-    } else {
-
-        printf("Error: could not open data file %s", file);
-
-    }
-
-    // close the file
-    fclose(fp);
-
-}
-
-
-void readTextFile(char *file, int size, Instruction *textFileArray) {
-
-    FILE *fp = fopen(file, "r");
-
-    int i = 0;
-
-    if (fp != NULL) {
-
-        char buffer[LINE_LENGTH];
-        //char *buffer;
-
-        // read file line by line
-        while(fgets(buffer, LINE_LENGTH, fp)) {
-
-            Instruction instruction;
-
-            instruction.line = buffer;
-
-            textFileArray[i] = instruction;
-
-            i++;
-
-        }
-
-    } else {
-
-        printf("Error: could not open text file %s", file);
-
-    }
-
-    // close the file
-    fclose(fp);
-
-}
 */
 
 
@@ -166,15 +78,95 @@ void readTextFile(char *file, int size, Instruction *textFileArray) {
 
 
 
-void printLines(char **lines, int stored) {
+void sliceInstruction(char *instruction, char *slice, int start, int end) {
 
+    int j = 0;
 
-    for (size_t i = 0; i < stored; i++) {
-        printf ("line[%3zu] : %s\n", i, lines[i]);
+    for (int i = start; i < end; i++) {
+
+        slice[j] = instruction[i];
+
+        j++;
 
     }
 
+}
 
+void instructionR(char *instruction) {
+
+    char opcode[OPCODE_LENGHT];
+    char rs[RS_LENGHT];
+    char rt[RT_LENGHT];
+    char rd[RD_LENGHT];
+    char shamt[SHAMT_LENGHT];
+    char funct[FUNCT_LENGHT];
+
+    sliceInstruction(instruction, opcode, 0, 6);
+    sliceInstruction(instruction, rs, 6, 11);
+    sliceInstruction(instruction, rt, 11, 16);
+    sliceInstruction(instruction, rd, 16, 21);
+    sliceInstruction(instruction, shamt, 21, 26);
+    sliceInstruction(instruction,funct, 26, 32);
+
+    printf ("opcode = %s\n", opcode);
+    printf ("rs = %s\n", rs);
+    printf ("rt = %s\n", rt);
+    printf ("rd = %s\n", rd);
+    printf ("shamt = %s\n", shamt);
+    printf ("funct = %s\n\n", funct);
+
+}
+
+void instructionI(char *instruction) {
+
+    char opcode[OPCODE_LENGHT];
+    char rs[RS_LENGHT];
+    char rt[RT_LENGHT];
+
+    //char immediate[IMMEDIATE_LENGHT]; //-------> GENERA PROBLEMA Y NO SE POR QUE
+    char immediate[16];
+
+    sliceInstruction(instruction, opcode, 0, 6);
+    sliceInstruction(instruction, rs, 6, 11);
+    sliceInstruction(instruction, rt, 11, 16);
+    sliceInstruction(instruction, immediate, 16, 32);
+
+    printf ("opcode = %s\n", opcode);
+    printf ("rs = %s\n", rs);
+    printf ("rt = %s\n", rt);
+    printf ("immediate = %s\n\n", immediate);
+
+}
+
+void instructionJ(char *instruction) {
+
+    char opcode[OPCODE_LENGHT];
+    char address[ADDRESS_LENGHT];
+
+    sliceInstruction(instruction, opcode, 0, 6);
+    sliceInstruction(instruction, address, 6, 32);
+
+    printf ("opcode = %s\n", opcode);
+    printf ("address = %s\n\n", address);
+
+}
+
+
+
+
+
+
+
+
+
+void printLines(char **lines, int size) {
+
+
+    for (size_t i = 0; i < size; i++) {
+
+        printf ("line[%3zu] : %s\n", i, lines[i]);
+
+    }
 
 }
 
@@ -195,122 +187,28 @@ void printLines(char **lines, int stored) {
 
 int main() {
 
-    /*
-    // read data file
-    char *dataFile = "pongData.txt";
-    readDataFile(dataFile);
-
-
-    // read text file
-    //char *textFile = "pongText.txt";
-
-    //int size = fileSize(textFile);
-
-    //Instruction *textFileCode;
-    //textFileCode = (Instruction*)malloc(size * sizeof(Instruction));
-
-    //char textFileCode[size][LINE_LENGTH];
-
-    //char **textFileCodePtr = &textFileCode;
-
-    //char *textFileCode;
-    //textFileCode = (char*)malloc(size * (char*)malloc(size * sizeof(char)));
-
-    //textFileCode [size][LINE_LENGTH];
-
-    //Instruction *textFileArray;
-    //textFileArray = (Instruction*)malloc(size * sizeof(Instruction));
-
-    //readTextFile(textFile, size, textFileArray);
-
-
-
+    char buffer[MAX_CHARACTERS];
 
     // reading text file
-    char *textFile = "pongText.txt";
-
-    int size = fileSize(textFile);
-
-    char textFileArray[size][LINE_LENGTH];
-
-    FILE *fp = fopen(textFile, "r");
-
-    //int i = 0;
-
-    if (fp != NULL) {
-
-        printf("holiiii");
-
-        char line[LINE_LENGTH];
-
-        // read file line by line
-        while(fgets(line, LINE_LENGTH, fp)) {
-
-            int j = 0;
-
-            while(line[j] != '\n') {
-
-                textFileArray[i][j] = line[j];
-
-                j++;
-
-            }
-
-            printf("%s", line);
-
-            i++;
-
-
-
-            printf("%s", line);
-
-        }
-
-    } else {
-
-        printf("Error: could not open text file %s", textFile);
-
-    }
-
-    // close the file
-    fclose(fp);
-
-    //free(textFileArray);
-
-    return 0;
-
-    */
-
-
-
-
-
-
-
-
-
-
-
-
-    char buffer[MAX_CHARACTERS];
-    char **lines;
+    char **textInstructions;
 
     int nptrs = NUMBER_POINTERS;
-    int stored = 0;
 
-    char *textFile = "pongText.txt";
+    int textInstructionsSize = 0;
 
-    FILE *fp = fopen(textFile, "r");
+    char *file = "pongText.txt";
+
+    FILE *fp = fopen(file, "r");
 
     if (!fp) {
 
-        perror("file open failed");
+        perror("text file open failed");
 
         return 1;
 
-    } else if ((lines = malloc(nptrs * sizeof *lines)) == NULL) {
+    } else if ((textInstructions = malloc(nptrs * sizeof *textInstructions)) == NULL) {
 
-        perror("malloc-lines");
+        perror("malloc error");
 
         exit (EXIT_FAILURE);
 
@@ -322,35 +220,35 @@ int main() {
 
         buffer[(size = strcspn (buffer, "\n"))] = 0;
 
-        if (stored == nptrs) {
+        if (textInstructionsSize == nptrs) {
 
-            void *tmp = realloc(lines, (2 * nptrs) * sizeof *lines);
+            void *tmp = realloc(textInstructions, (2 * nptrs) * sizeof *textInstructions);
 
             if (!tmp) {
 
-                perror ("realloc-lines");
+                perror ("realloc error");
 
                 break;
 
             }
 
-            lines = tmp;
+            textInstructions = tmp;
 
             nptrs *= 2;
 
         }
 
-        if (!(lines[stored] = malloc (size + 1))) {
+        if (!(textInstructions[textInstructionsSize] = malloc(size + 1))) {
 
-            perror ("malloc-lines[used]");
+            perror ("malloc error");
 
             break;
 
         }
 
-        memcpy (lines[stored], buffer, size + 1);
+        memcpy(textInstructions[textInstructionsSize], buffer, size + 1);
 
-        stored += 1;
+        textInstructionsSize += 1;
 
     }
 
@@ -360,9 +258,183 @@ int main() {
 
     }
 
+    // reading data file
+    char **dataInstructions;
+
+    nptrs = NUMBER_POINTERS;
+
+    int dataInstructionsSize = 0;
+
+    file = "pongData.txt";
+
+    fp = fopen(file, "r");
+
+    if (!fp) {
+
+        perror("data file open failed");
+
+        return 1;
+
+    } else if ((dataInstructions = malloc(nptrs * sizeof *dataInstructions)) == NULL) {
+
+        perror("malloc error");
+
+        exit (EXIT_FAILURE);
+
+    }
+
+    while (fgets(buffer, MAX_CHARACTERS, fp)) {
+
+        int size;
+
+        buffer[(size = strcspn (buffer, "\n"))] = 0;
+
+        if (dataInstructionsSize == nptrs) {
+
+            void *tmp = realloc(dataInstructions, (2 * nptrs) * sizeof *dataInstructions);
+
+            if (!tmp) {
+
+                perror ("realloc error");
+
+                break;
+
+            }
+
+            dataInstructions = tmp;
+
+            nptrs *= 2;
+
+        }
+
+        if (!(dataInstructions[dataInstructionsSize] = malloc(size + 1))) {
+
+            perror ("malloc error");
+
+            break;
+
+        }
+
+        memcpy(dataInstructions[dataInstructionsSize], buffer, size + 1);
+
+        dataInstructionsSize += 1;
+
+    }
+
+    if (fp != stdin) {
+
+        fclose (fp);
+
+    }
+
+    //printLines(textInstructions, textInstructionsSize);
+
+    //printLines(dataInstructions, dataInstructionsSize);
 
 
-    printLines(lines, stored);
+
+
+
+    // ALMACENAR VARIABLES DEL DATA
+
+
+
+
+    // text instructions execution
+    while(PC < textInstructionsSize) {
+
+        char *instruction;
+
+        instruction = textInstructions[PC];
+
+        char opcode[OPCODE_LENGHT];
+
+        // getting opcode from instruction
+        for(int i = 0; i < OPCODE_LENGHT; i++) {
+
+            opcode[i] = instruction[i];
+
+        }
+
+        // R instruction
+        if(strcmp(opcode, "000000") == 0) {
+
+            //printf ("PC = %d\n", PC);
+
+            //instructionR(instruction);
+
+        // J instruction
+        } else if(strcmp(opcode, "000010") == 0 || strcmp(opcode, "000011") == 0) {
+
+            printf ("PC = %d\n", PC);
+
+            instructionJ(instruction);
+
+        // I instruction
+        } else {
+
+            //printf ("PC = %d\n", PC);
+
+            //instructionI(instruction);
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        PC++;
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -373,12 +445,22 @@ int main() {
 
 
     // free memory
-    for (size_t i = 0; i < stored; i++) {
-        //printf ("line[%3zu] : %s\n", i, lines[i]);
-        free (lines[i]);
+    for (size_t i = 0; i < textInstructionsSize; i++) {
+
+        free(textInstructions[i]);
+
     }
 
-    free (lines);
+    free(textInstructions);
+
+    // free memory
+    for (size_t i = 0; i < dataInstructionsSize; i++) {
+
+        free(dataInstructions[i]);
+
+    }
+
+    free(dataInstructions);
 
 }
 

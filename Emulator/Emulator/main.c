@@ -393,238 +393,380 @@ void sliceInstruction(char *instruction, char *slice, int start, int end) {
 
 void instructionR(char *instruction) {
 
-    char opcode[OPCODE_LENGHT];
-    char rs[RS_LENGHT];
-    char rt[RT_LENGHT];
-    char rd[RD_LENGHT];
-    char shamt[SHAMT_LENGHT];
-    char funct[FUNCT_LENGHT];
+    char opcodeChar[OPCODE_LENGHT];
+    char rsChar[RS_LENGHT];
+    char rtChar[RT_LENGHT];
+    char rdChar[RD_LENGHT];
+    char shamtChar[SHAMT_LENGHT];
+    char functChar[FUNCT_LENGHT];
 
-    int decimalFunct;
+    //int opcode;
+    int rs;
+    int rt;
+    int rd;
+    int shamt;
+    int funct;
 
-    sliceInstruction(instruction, opcode, 0, 6);
-    sliceInstruction(instruction, rs, 6, 11);
-    sliceInstruction(instruction, rt, 11, 16);
-    sliceInstruction(instruction, rd, 16, 21);
-    sliceInstruction(instruction, shamt, 21, 26);
-    sliceInstruction(instruction,funct, 26, 32);
+    sliceInstruction(instruction, opcodeChar, 0, 6);
+    sliceInstruction(instruction, rsChar, 6, 11);
+    sliceInstruction(instruction, rtChar, 11, 16);
+    sliceInstruction(instruction, rdChar, 16, 21);
+    sliceInstruction(instruction, shamtChar, 21, 26);
+    sliceInstruction(instruction,functChar, 26, 32);
 
-    decimalFunct = binaryToDecimal(funct, FUNCT_LENGHT);
+    //opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
+    rs = binaryToDecimal(rsChar, FUNCT_LENGHT);
+    rt = binaryToDecimal(rtChar, FUNCT_LENGHT);
+    rd = binaryToDecimal(rdChar, FUNCT_LENGHT);
+    shamt = binaryToDecimal(shamtChar, FUNCT_LENGHT);
+    funct = binaryToDecimal(functChar, FUNCT_LENGHT);
 
-    printf ("opcode = %s\n", opcode);
-    printf ("rs = %s\n", rs);
-    printf ("rt = %s\n", rt);
-    printf ("rd = %s\n", rd);
-    printf ("shamt = %s\n", shamt);
-    printf ("funct = %s\n", funct);
-    printf ("funct decimal = %d\n\n", decimalFunct);
+    printf ("opcode = %s\n", opcodeChar);
+    printf ("rs = %s\n", rsChar);
+    printf ("rt = %s\n", rtChar);
+    printf ("rd = %s\n", rdChar);
+    printf ("shamt = %s\n", shamtChar);
+    printf ("funct = %s\n", functChar);
 
-    switch(decimalFunct) {
+    switch(funct) {
 
         case 0:
 
             printf("%s\n", "sll");
+
+            sll(rt, rd, shamt);
+
             break;
 
         case 2:
+
             printf("%s\n", "srl");
+
+            srl(rt, rd, shamt);
+
             break;
 
         case 8:
 
             printf("%s\n", "jr");
+
+            //jr(rs);
+
+            break;
+
+        case 12:
+
+            printf("%s\n", "syscall");
+
+            //syscall();
+
             break;
 
         case 32:
 
             printf("%s\n", "add");
+
+            add(rs, rt, rd);
+
             break;
 
         case 33:
 
             printf("%s\n", "addu");
+
+            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+
+            //printf("rs = %d\n", rs);
+            //printf("rt = %d\n", rt);
+            //printf("rd = %d\n", rd);
+
+            //addu(rs, rt, rd);
+
             break;
 
         case 34:
 
             printf("%s\n", "sub");
+
+            sub(rs, rt, rd);
+
             break;
 
         case 35:
 
             printf("%s\n", "subu");
+
+            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+
+            subu(rs, rt, rd);
+
             break;
 
         case 36:
 
             printf("%s\n", "and");
+
+            //and()
+
             break;
 
         case 37:
 
             printf("%s\n", "or");
+
+            //or()
+
             break;
 
         case 39:
 
             printf("%s\n", "nor");
+
+            //nor()
+
             break;
 
         case 42:
 
             printf("%s\n", "slt");
+
+            slt(rs, rt, rd);
+
             break;
 
         case 43:
 
             printf("%s\n", "sltu");
+
+            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+
+            //sltu(rs, rt, rd);
+
             break;
 
     }
+
+    printf("\n");
 
 }
 
 void instructionI(char *instruction) {
 
-    char opcode[OPCODE_LENGHT];
-    char rs[RS_LENGHT];
-    char rt[RT_LENGHT];
-    char immediate[16];
+    char opcodeChar[OPCODE_LENGHT];
+    char rsChar[RS_LENGHT];
+    char rtChar[RT_LENGHT];
+    char immediateChar[16];
 
-    int decimalImmediate;
+    int opcode;
+    int rs;
+    int rt;
+    int immediate;
 
-    sliceInstruction(instruction, opcode, 0, 6);
-    sliceInstruction(instruction, rs, 6, 11);
-    sliceInstruction(instruction, rt, 11, 16);
-    sliceInstruction(instruction, immediate, 16, 32);
+    sliceInstruction(instruction, opcodeChar, 0, 6);
+    sliceInstruction(instruction, rsChar, 6, 11);
+    sliceInstruction(instruction, rtChar, 11, 16);
+    sliceInstruction(instruction, immediateChar, 16, 32);
 
-    decimalImmediate = binaryToDecimal(immediate, 16);
+    opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
+    rs = binaryToDecimal(rsChar, RS_LENGHT);
+    rt = binaryToDecimal(rtChar, RT_LENGHT);
+    immediate = binaryToDecimal(immediateChar, 16);
 
-    printf ("opcode = %s\n", opcode);
-    printf ("rs = %s\n", rs);
-    printf ("rt = %s\n", rt);
-    printf ("immediate = %s\n\n", immediate);
-    printf ("immediate decimal = %d\n", decimalImmediate);
+    printf ("opcode = %s\n", opcodeChar);
+    printf ("rs = %s\n", rsChar);
+    printf ("rt = %s\n", rtChar);
+    printf ("immediate = %s\n", immediateChar);
 
-    switch(decimalImmediate){
+    switch(opcode){
 
         case 4:
 
             printf("%s\n", "beq");
+
+            //beq()
+
             break;
 
         case 5:
 
             printf("%s\n", "bne");
+
+            //bne()
+
             break;
 
         case 8:
 
             printf("%s\n", "addi");
+
+            addi(rs, rt, immediate);
+
             break;
 
         case 9:
 
             printf("%s\n", "addiu");
+
+            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+
+            addiu(rs, rt, immediate);
+
             break;
 
         case 10:
 
             printf("%s\n", "slti");
+
+            slti(rs, rt, immediate);
+
             break;
 
         case 11:
 
             printf("%s\n", "sltiu");
+
+            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+
+            sltiu(rs, rt, immediate);
+
             break;
 
         case 12:
 
             printf("%s\n", "andi");
+
+            //andi()
+
             break;
 
         case 13:
 
             printf("%s\n", "ori");
+
+            //ori()
+
             break;
 
         case 15:
 
             printf("%s\n", "lui");
+
+            //lui()
+
             break;
 
         case 35:
 
             printf("%s\n", "lw");
+
+            //lw()
+
             break;
 
         case 36:
 
             printf("%s\n", "lbu");
+
+            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+
+            //lbu()
+
             break;
 
         case 37:
 
             printf("%s\n", "lhu");
+
+            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+
+            //lhu()
+
             break;
 
         case 40:
 
             printf("%s\n", "sb");
+
+            //sb()
+
             break;
 
         case 41:
 
             printf("%s\n", "sh");
+
+            //sh()
+
             break;
 
         case 43:
 
             printf("%s\n", "sw");
+
+            //sw()
+
             break;
 
         case 48:
 
             printf("%s\n", "ll");
+
+            //ll()
+
             break;
 
         case 56:
 
             printf("%s\n", "sc");
+
+            //sc()
+
             break;
 
     }
+
+    printf("\n");
 
 }
 
 void instructionJ(char *instruction) {
 
-    char opcode[OPCODE_LENGHT];
-    char address[ADDRESS_LENGHT];
+    char opcodeChar[OPCODE_LENGHT];
+    char addressChar[ADDRESS_LENGHT];
 
-    int decimalOpcode;
+    int opcode;
+    int address;
 
-    sliceInstruction(instruction, opcode, 0, 6);
-    sliceInstruction(instruction, address, 6, 32);
+    sliceInstruction(instruction, opcodeChar, 0, 6);
+    sliceInstruction(instruction, addressChar, 6, 32);
 
-    decimalOpcode = binaryToDecimal(opcode, OPCODE_LENGHT);
+    opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
+    address = binaryToDecimal(addressChar, ADDRESS_LENGHT);
 
-    printf ("opcode = %s\n", opcode);
-    printf ("address = %s\n\n", address);
-    printf ("opcode decimal = %d\n", decimalOpcode);
+    printf ("opcode = %s\n", opcodeChar);
+    printf ("address = %s\n", addressChar);
 
-       switch(decimalOpcode){
+       switch(opcode){
 
         case 2:
 
             printf("%s\n", "j");
+
+            j(address);
+
             break;
 
         case 3:
 
             printf("%s\n", "jal");
+
+            jal(address);
+
             break;
+
     }
+
+   printf("\n");
 
 }
 
@@ -773,6 +915,7 @@ int main() {
     if (fp != stdin) {
 
         fclose (fp);
+
     }
 
     //printLines(textInstructions, textInstructionsSize);
@@ -800,6 +943,7 @@ int main() {
         // R instruction
         if (strcmp(opcode, "000000") == 0) {
 
+            printf ("Type R\n");
             printf ("pc = %d\n", pc);
 
             instructionR(instruction);
@@ -807,21 +951,18 @@ int main() {
         // J instruction
         } else if (strcmp(opcode, "000010") == 0 || strcmp(opcode, "000011") == 0) {
 
-            printf ("pc = %d\n", pc);
+            //printf ("Type J\n");
+            //printf ("pc = %d\n", pc);
 
-            instructionJ(instruction);
+            //instructionJ(instruction);
 
         // I instruction
         } else {
 
-            if (strcmp(opcode, "000100") == 0) {
+            printf ("Type I\n");
+            printf ("pc = %d\n", pc);
 
-                printf ("Type I\n");
-                printf ("pc = %d\n", pc);
-
-                instructionI(instruction);
-
-            }
+            instructionI(instruction);
 
         }
 

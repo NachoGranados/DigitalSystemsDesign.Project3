@@ -26,11 +26,12 @@ const int IMMEDIATE_LENGHT = 16;
 // Instruction J constant
 const int ADDRESS_LENGHT = 26;
 
-// Register constant
-//const int NUMBER_REGISTERS = 32;
-
 // Global variables
 int pc = 0;
+
+char **dataInstructions;
+
+int sp = 0;
 
 /*
 registers[0]     -> $zero   -> The Constant Value 0
@@ -81,7 +82,7 @@ void addu(int rs, int rt, int rd) {
 }
 
 /*
-int and(int rs, int rt) {
+int and(int rs, int rt) { NO ESTA
 
     int rd = 0;
 
@@ -91,8 +92,7 @@ int and(int rs, int rt) {
 
 }
 
-int andi(int rs, int ZeroExtImm) {
-
+int andi(int rs, int ZeroExtImm) { NO ESTA
     int rt = 0;
 
     // ...
@@ -143,7 +143,7 @@ void jr(int rs) {
 }
 
 /*
-int lbu(int rs, int SignExtImm) {
+int lbu(int rs, int SignExtImm) { NO ESTA
 
     int rt = 0;
 
@@ -153,7 +153,7 @@ int lbu(int rs, int SignExtImm) {
 
 }
 
-int lhu(int rs, int SignExtImm) {
+int lhu(int rs, int SignExtImm) { NO ESTA
 
     int rt = 0;
 
@@ -163,7 +163,7 @@ int lhu(int rs, int SignExtImm) {
 
 }
 
-int ll(int rs, int SignExtImm) {
+int ll(int rs, int SignExtImm) { NO ESTA
 
     int rt = 0;
 
@@ -173,7 +173,7 @@ int ll(int rs, int SignExtImm) {
 
 }
 
-int lui(int imm) {
+int lui(int imm) { NO ESTA
 
     int rt = 0;
 
@@ -182,18 +182,16 @@ int lui(int imm) {
     return rt;
 
 }
+*/
 
 void lw(int rs, int rt, int SignExtImm) {
 
-    int rt = 0;
-
-    // ...
-
-    return rt;
+    // DEBE BUSCAR EN EL STACK
 
 }
 
-int nor(int rs, int rt) {
+/*
+int nor(int rs, int rt) { NO ESTA
 
     int rd = 0;
 
@@ -203,7 +201,7 @@ int nor(int rs, int rt) {
 
 }
 
-int or(int rs, int rt) {
+int or(int rs, int rt) { NO ESTA
 
     int rd = 0;
 
@@ -213,7 +211,7 @@ int or(int rs, int rt) {
 
 }
 
-int ori(int rs, int ZeroExtImm) {
+int ori(int rs, int ZeroExtImm) { NO ESTA
 
     int rt = 0;
 
@@ -297,7 +295,7 @@ void srl(int rt, int rd, int shamt) {
 }
 
 /*
-int sb(int rs, int SignExtImm) {
+int sb(int rs, int SignExtImm) { NO ESTA
 
     int rt = 0;
 
@@ -307,7 +305,7 @@ int sb(int rs, int SignExtImm) {
 
 }
 
-int sc(int rs, int SignExtImm) {
+int sc(int rs, int SignExtImm) { NO ESTA
 
     int rt = 0;
 
@@ -317,18 +315,7 @@ int sc(int rs, int SignExtImm) {
 
 }
 
-int sh(int rs, int SignExtImm) {
-
-    int rt = 0;
-
-    // ...
-
-    return rt;
-
-}
-
-
-int sw(int rs, int SignExtImm) {
+int sh(int rs, int SignExtImm) { NO ESTA
 
     int rt = 0;
 
@@ -338,6 +325,11 @@ int sw(int rs, int SignExtImm) {
 
 }
 */
+
+void sw(int rs, int SignExtImm) {
+
+}
+
 
 void sub(int rs, int rt, int rd) {
 
@@ -352,6 +344,76 @@ void subu(int rs, int rt, int rd) {
     int aux = registers[rs] - registers[rt];
 
     registers[rd] = aux;
+
+}
+
+void blt() {
+
+}
+
+void bgt() {
+
+}
+
+void ble() {
+
+}
+
+void bge() {
+
+}
+
+void li(int rt, int immediate) {
+
+    registers[rt] = immediate;
+
+}
+
+
+void move(int rs, int rd) {
+
+    registers[rd] = registers[rs];
+
+}
+
+void sliceInstruction(char *instruction, char *slice, int start, int end) {
+
+    int j = 0;
+
+    for (int i = start; i < end; i++) {
+
+        slice[j] = instruction[i];
+
+        j++;
+
+    }
+
+}
+
+void complement2(char *instruction, int length) {
+
+    char temp[1];
+    char *aux;
+
+    for(int i = 0; i < length; i++) {
+
+        sliceInstruction(instruction, temp, i, i + 1);
+
+        if(strcmp(temp, "0") == 0) {
+
+            aux = "1";
+
+            instruction[i] = *aux;
+
+        } else if(strcmp(temp, "1") == 0) {
+
+            aux = "0";
+
+            instruction[i] = *aux;
+
+        }
+
+    }
 
 }
 
@@ -377,17 +439,25 @@ int binaryToDecimal(char binary[], int length) {
 
 }
 
-void sliceInstruction(char *instruction, char *slice, int start, int end) {
+int isNegative(char *instruction) {
 
-    int j = 0;
+    int result = 0;
 
-    for (int i = start; i < end; i++) {
+    int aux;
 
-        slice[j] = instruction[i];
+    char temp[1];
 
-        j++;
+    sliceInstruction(instruction, temp, 0, 1);
+
+    aux = binaryToDecimal(temp, 1);
+
+    if(aux == 1) {
+
+        result = 1;
 
     }
+
+    return result;
 
 }
 
@@ -472,7 +542,7 @@ void instructionR(char *instruction) {
 
         case 33:
 
-            printf("%s\n", "addu");
+            printf("%s\n", "addu o move");
 
             // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
 
@@ -480,7 +550,7 @@ void instructionR(char *instruction) {
             //printf("rt = %d\n", rt);
             //printf("rd = %d\n", rd);
 
-            //addu(rs, rt, rd);
+            addu(rs, rt, rd);
 
             break;
 
@@ -495,8 +565,6 @@ void instructionR(char *instruction) {
         case 35:
 
             printf("%s\n", "subu");
-
-            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
 
             subu(rs, rt, rd);
 
@@ -538,8 +606,6 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "sltu");
 
-            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
-
             //sltu(rs, rt, rd);
 
             break;
@@ -570,12 +636,12 @@ void instructionI(char *instruction) {
     opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
     rs = binaryToDecimal(rsChar, RS_LENGHT);
     rt = binaryToDecimal(rtChar, RT_LENGHT);
-    immediate = binaryToDecimal(immediateChar, 16);
+    immediate = binaryToDecimal(immediateChar, IMMEDIATE_LENGHT);
 
-    //printf ("opcode = %s\n", opcodeChar);
-    //printf ("rs = %s\n", rsChar);
-    //rintf ("rt = %s\n", rtChar);
-    //printf ("immediate = %s\n", immediateChar);
+    printf ("opcode = %s\n", opcodeChar);
+    printf ("rs = %s\n", rsChar);
+    printf ("rt = %s\n", rtChar);
+    printf ("immediate = %s\n", immediateChar);
 
     switch(opcode){
 
@@ -599,15 +665,68 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "addi");
 
+            // negative number
+            if(isNegative(immediateChar) == 1) {
+
+                complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+            }
+
             addi(rs, rt, immediate);
 
             break;
 
         case 9:
 
-            printf("%s\n", "addiu");
+            printf("%s\n", "addiu o li");
 
             // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+
+            /*
+
+            100011 00001 01001 0000000000000100 => lw $t1, 0xFFFF0004
+            001000 00000 00001 0000000000110001 => addi $at, $zero, 49 => ??????????
+            000100 00001 01001 0000000000000110 => beq $t1, 0x00000031, SetOnePlayerMode
+            001000 00000 00001 0000000000110010 => addi $at, $zero, 50 => ??????????
+            000100 00001 01001 0000000000000110 => beq $t1, 0x00000032, SetTwoPlayerMode
+            001001 00000 00100 0000000011111010 => li $a0, 250
+            001001 00000 00010 0000000000100000 => li $v0, 32
+            000000 00000 00000 0000000000001100   => syscall
+            000010 00000100000000000011010010   => j SelectMode
+            001001 00000 01001 0000000000000001 => li $t1, 1
+            000010 00000100000000000011011111   => j BeginGame
+            001001 00000 01001 0000000000000010 => li $t1, 2
+
+            000000 00000 00000 00000 00000 001100 => syscall ====> 269
+            000000 00000 10110 00100 00000 100001 => addu o move
+            000000 00000 10111 00101 00000 100001 => addu o move
+            000011 00000100000000000111100010     => jal
+            000011 00000100000000000110011000     => jal
+            001001 00000 00100 0000000000001101   => addiu o li
+            000000 00000 10100 00101 00000 100001 => addu o move
+            001111 00000 00001 0001000000000001   => lui -------
+            100011 00001 00110 0000000000100000   => lw
+            000000 00000 10000 00111 00000 100001 => addu o move
+            000011 00000100000000000101000111     => jal
+            000000 00000 00101 10100 00000 100001 => addu o move
+            000000 00000 00111 10000 00000 100001 => addu o move
+            001001 00000 00100 0000000000110010   => addiu o li
+            000000 00000 10101 00101 00000 100001 => addu o move
+            001111 00000 00001 0001000000000001   => lui ------
+            100011 00001 00110 0000000000100100   => lw =======> 285
+
+            */
+
+            // negative number
+            if(isNegative(immediateChar) == 1) {
+
+                complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+            }
 
             addiu(rs, rt, immediate);
 
@@ -625,7 +744,14 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "sltiu");
 
-            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+            // negative number
+            if(isNegative(immediateChar) == 1) {
+
+                complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+            }
 
             sltiu(rs, rt, immediate);
 
@@ -651,7 +777,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lui");
 
-            //lui()
+            // SE IGNORA
 
             break;
 
@@ -659,7 +785,38 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lw");
 
-            //lw()
+            // key pressed or data instruction
+            if(rs == 1) {
+
+                // key pressed  0xFFFF0004                 0xFFFF0000
+                if(immediate == 4294901764 || immediate == 4294901760) {
+
+                    // REVISAR SI SE PRESIONA UNA TECLA
+
+                // data instruction
+                } else {
+
+                    immediate /= 4;
+
+                    printf("aux = %d\n", immediate);
+
+                    //char *auxChar;
+
+                    //auxChar = dataInstructions[immediate];
+
+                    //int aux = binaryToDecimal(auxChar, IMMEDIATE_LENGHT);
+
+                    //li(rt, aux);
+
+                }
+
+            } else if(rs == 29) {
+
+                // USO DEL STACK
+
+                lw(rs, rt, immediate);
+
+            }
 
             break;
 
@@ -667,7 +824,14 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lbu");
 
-            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+            // negative number
+            if(isNegative(immediateChar) == 1) {
+
+                complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+            }
 
             //lbu()
 
@@ -677,7 +841,14 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lhu");
 
-            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
+            // negative number
+            if(isNegative(immediateChar) == 1) {
+
+                complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+            }
 
             //lhu()
 
@@ -703,7 +874,45 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "sw");
 
-            //sw()
+            /*
+
+            101011 00001 00000 0000000000000000
+            sw $zero, 0xFFFF0000 => 323
+            NO HACE NACE NADA
+
+            sw $t1, mode
+            101011 00001 01001 0000000000110100
+            sw     $at   $t1   52
+
+            */
+
+            // cannot overwrite register $zero
+            if(rt != 0) {
+
+                // data instruction
+                if(rs == 1) {
+
+                    immediate /= 4;
+
+                    printf("immedaite = %d\n", immediate);
+
+                    char *auxChar;
+
+                    auxChar = dataInstructions[immediate];
+
+                    int aux = binaryToDecimal(auxChar, IMMEDIATE_LENGHT);
+
+                    printf("aux = %d\n", aux);
+
+                    li(rt, aux);
+
+                } else {
+
+                // USO DEL STACK
+
+                }
+
+            }
 
             break;
 
@@ -735,34 +944,34 @@ void instructionJ(char *instruction) {
     char addressChar[ADDRESS_LENGHT];
 
     int opcode;
-    int address;
+    //int address;
 
     sliceInstruction(instruction, opcodeChar, 0, 6);
     sliceInstruction(instruction, addressChar, 6, 32);
 
     opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
-    address = binaryToDecimal(addressChar, ADDRESS_LENGHT);
+    //address = binaryToDecimal(addressChar, ADDRESS_LENGHT);
 
     printf ("opcode = %s\n", opcodeChar);
     printf ("address = %s\n", addressChar);
 
-       switch(opcode){
+   switch(opcode) {
 
-        case 2:
+    case 2:
 
-            printf("%s\n", "j");
+        printf("%s\n", "j");
 
-            j(address);
+        //j(address);
 
-            break;
+        break;
 
-        case 3:
+    case 3:
 
-            printf("%s\n", "jal");
+        printf("%s\n", "jal");
 
-            jal(address);
+        //jal(address);
 
-            break;
+        break;
 
     }
 
@@ -777,6 +986,7 @@ void printLines(char **lines, int size) {
         printf ("line[%3zu] : %s\n", i, lines[i]);
 
     }
+
 }
 
 int main() {
@@ -794,13 +1004,13 @@ int main() {
 
     FILE *fp = fopen(file, "r");
 
-    if (!fp) {
+    if(!fp) {
 
         perror("text file open failed");
 
         return 1;
 
-    } else if ((textInstructions = malloc(nptrs * sizeof *textInstructions)) == NULL) {
+    } else if((textInstructions = malloc(nptrs * sizeof *textInstructions)) == NULL) {
 
         perror("malloc error");
 
@@ -808,17 +1018,17 @@ int main() {
 
     }
 
-    while (fgets(buffer, MAX_CHARACTERS, fp)) {
+    while(fgets(buffer, MAX_CHARACTERS, fp)) {
 
         int size;
 
         buffer[(size = strcspn (buffer, "\n"))] = 0;
 
-        if (textInstructionsSize == nptrs) {
+        if(textInstructionsSize == nptrs) {
 
             void *tmp = realloc(textInstructions, (2 * nptrs) * sizeof *textInstructions);
 
-            if (!tmp) {
+            if(!tmp) {
 
                 perror ("realloc error");
 
@@ -830,7 +1040,7 @@ int main() {
             nptrs *= 2;
         }
 
-        if (!(textInstructions[textInstructionsSize] = malloc(size + 1))) {
+        if(!(textInstructions[textInstructionsSize] = malloc(size + 1))) {
 
             perror ("malloc error");
 
@@ -843,15 +1053,13 @@ int main() {
 
     }
 
-    if (fp != stdin) {
+    if(fp != stdin) {
 
         fclose (fp);
 
     }
 
     // reading data file
-    char **dataInstructions;
-
     nptrs = NUMBER_POINTERS;
 
     int dataInstructionsSize = 0;
@@ -860,31 +1068,31 @@ int main() {
 
     fp = fopen(file, "r");
 
-    if (!fp) {
+    if(!fp) {
 
         perror("data file open failed");
 
         return 1;
 
-    } else if ((dataInstructions = malloc(nptrs * sizeof *dataInstructions)) == NULL) {
+    } else if((dataInstructions = malloc(nptrs * sizeof *dataInstructions)) == NULL) {
 
         perror("malloc error");
 
-        exit (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
 
     }
 
-    while (fgets(buffer, MAX_CHARACTERS, fp)) {
+    while(fgets(buffer, MAX_CHARACTERS, fp)) {
 
         int size;
 
         buffer[(size = strcspn (buffer, "\n"))] = 0;
 
-        if (dataInstructionsSize == nptrs) {
+        if(dataInstructionsSize == nptrs) {
 
             void *tmp = realloc(dataInstructions, (2 * nptrs) * sizeof *dataInstructions);
 
-            if (!tmp) {
+            if(!tmp) {
 
                 perror ("realloc error");
 
@@ -898,7 +1106,7 @@ int main() {
 
         }
 
-        if (!(dataInstructions[dataInstructionsSize] = malloc(size + 1))) {
+        if(!(dataInstructions[dataInstructionsSize] = malloc(size + 1))) {
 
             perror ("malloc error");
 
@@ -912,7 +1120,7 @@ int main() {
 
     }
 
-    if (fp != stdin) {
+    if(fp != stdin) {
 
         fclose (fp);
 
@@ -934,39 +1142,49 @@ int main() {
         char opcode[OPCODE_LENGHT];
 
         // getting opcode from instruction
-        for (int i = 0; i < OPCODE_LENGHT; i++) {
+        for(int i = 0; i < OPCODE_LENGHT; i++) {
 
             opcode[i] = instruction[i];
 
         }
 
         // R instruction
-        if (strcmp(opcode, "000000") == 0) {
+        if(strcmp(opcode, "000000") == 0) {
 
-            //printf ("Type R\n");
-            //printf ("pc = %d\n", pc);
+            printf ("Type R\n");
+            printf ("pc = %d\n", pc);
 
-            //instructionR(instruction);
+            instructionR(instruction);
 
         // J instruction
-        } else if (strcmp(opcode, "000010") == 0 || strcmp(opcode, "000011") == 0) {
+        } else if(strcmp(opcode, "000010") == 0 || strcmp(opcode, "000011") == 0) {
 
-            //printf ("Type J\n");
-            //printf ("pc = %d\n", pc);
+            printf ("Type J\n");
+            printf ("pc = %d\n", pc);
 
-            //instructionJ(instruction);
+            instructionJ(instruction);
 
         // I instruction
         } else {
 
-            //printf ("Type I\n");
+            printf ("Type I\n");
             printf ("pc = %d\n", pc);
 
             instructionI(instruction);
 
         }
 
+        // reset $zero
+        registers[0] = 0;
+
         pc++;
+
+        /*
+        int testInteger;
+        printf("Continue:");
+        scanf("%d", &testInteger);
+        printf("\n");
+        */
 
     }
 
@@ -989,3 +1207,40 @@ int main() {
     free(dataInstructions);
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

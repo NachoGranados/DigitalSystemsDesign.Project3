@@ -572,10 +572,10 @@ void instructionI(char *instruction) {
     rt = binaryToDecimal(rtChar, RT_LENGHT);
     immediate = binaryToDecimal(immediateChar, 16);
 
-    printf ("opcode = %s\n", opcodeChar);
-    printf ("rs = %s\n", rsChar);
-    printf ("rt = %s\n", rtChar);
-    printf ("immediate = %s\n", immediateChar);
+    //printf ("opcode = %s\n", opcodeChar);
+    //printf ("rs = %s\n", rsChar);
+    //rintf ("rt = %s\n", rtChar);
+    //printf ("immediate = %s\n", immediateChar);
 
     switch(opcode){
 
@@ -943,10 +943,10 @@ int main() {
         // R instruction
         if (strcmp(opcode, "000000") == 0) {
 
-            printf ("Type R\n");
-            printf ("pc = %d\n", pc);
+            //printf ("Type R\n");
+            //printf ("pc = %d\n", pc);
 
-            instructionR(instruction);
+            //instructionR(instruction);
 
         // J instruction
         } else if (strcmp(opcode, "000010") == 0 || strcmp(opcode, "000011") == 0) {
@@ -959,7 +959,7 @@ int main() {
         // I instruction
         } else {
 
-            printf ("Type I\n");
+            //printf ("Type I\n");
             printf ("pc = %d\n", pc);
 
             instructionI(instruction);

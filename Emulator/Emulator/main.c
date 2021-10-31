@@ -26,10 +26,13 @@ const int IMMEDIATE_LENGHT = 16;
 // Instruction J constant
 const int ADDRESS_LENGHT = 26;
 
+// Color constant
+const int MAX_IMMEDIATE_VALUE = 65535;
+
 // Global variables
 int pc = 0;
 
-char **dataInstructions;
+int *dataInstructions;
 
 int sp = 0;
 
@@ -100,12 +103,14 @@ int andi(int rs, int ZeroExtImm) { NO ESTA
     return rt;
 
 }
+*/
+
 
 void beq(int rs, int rt) {
 
     if(registers[rs] == registers[rt]) {
 
-        pc = pc + 1 +
+        //pc = pc + 1 +
 
     }
 
@@ -113,14 +118,14 @@ void beq(int rs, int rt) {
 
 void bne(int rs, int rt) {
 
-    int result = 0;
+    //int result = 0;
 
     // ...
 
-    return result;
+    //return result;
 
 }
-*/
+
 
 void j(int JumpAddr) {
 
@@ -328,8 +333,9 @@ int sh(int rs, int SignExtImm) { NO ESTA
 
 void sw(int rs, int SignExtImm) {
 
-}
+    // DEBE BUSCAR EN EL STACK
 
+}
 
 void sub(int rs, int rt, int rd) {
 
@@ -368,7 +374,6 @@ void li(int rt, int immediate) {
     registers[rt] = immediate;
 
 }
-
 
 void move(int rs, int rd) {
 
@@ -544,12 +549,6 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "addu o move");
 
-            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
-
-            //printf("rs = %d\n", rs);
-            //printf("rt = %d\n", rt);
-            //printf("rd = %d\n", rd);
-
             addu(rs, rt, rd);
 
             break;
@@ -682,8 +681,6 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "addiu o li");
 
-            // REVISAR PORQUE ALGUNOS PUEDE QUE VENGAN EN COMPLEMENTO A 2
-
             /*
 
             100011 00001 01001 0000000000000100 => lw $t1, 0xFFFF0004
@@ -796,17 +793,30 @@ void instructionI(char *instruction) {
                 // data instruction
                 } else {
 
+                    // negative number
+                    if(isNegative(immediateChar) == 1) {
+
+                        complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                        immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+                    }
+
                     immediate /= 4;
 
-                    printf("aux = %d\n", immediate);
+                    if(dataInstructions[immediate] < MAX_IMMEDIATE_VALUE) {
 
-                    //char *auxChar;
+                        li(rt, dataInstructions[immediate]);
 
-                    //auxChar = dataInstructions[immediate];
+                    } else {
 
-                    //int aux = binaryToDecimal(auxChar, IMMEDIATE_LENGHT);
+                        // SE CARGA UN COLOR
 
-                    //li(rt, aux);
+                        // TOMAR EN CUENTA EL BLANCO QUE ES 0x00000000
+
+                        //li(rt, dataInstructions[immediate]);
+
+                    }
 
                 }
 
@@ -894,21 +904,13 @@ void instructionI(char *instruction) {
 
                     immediate /= 4;
 
-                    printf("immedaite = %d\n", immediate);
-
-                    char *auxChar;
-
-                    auxChar = dataInstructions[immediate];
-
-                    int aux = binaryToDecimal(auxChar, IMMEDIATE_LENGHT);
-
-                    printf("aux = %d\n", aux);
-
-                    li(rt, aux);
+                    dataInstructions[immediate] = registers[rt];
 
                 } else {
 
-                // USO DEL STACK
+                    // USO DEL STACK
+
+                    //sw()
 
                 }
 
@@ -989,6 +991,35 @@ void printLines(char **lines, int size) {
 
 }
 
+void convertDataInstructions(char **instructions, int lenght) {
+
+    int aux;
+
+    char *temp;
+
+    for(int i = 0; i < lenght; i++) {
+
+        temp = instructions[i];
+
+        // negative number
+        if(isNegative(temp) == 1) {
+
+            complement2(temp, INSTRUCTION_LENGHT);
+
+            aux = -1 * (binaryToDecimal(temp, INSTRUCTION_LENGHT) + 1);
+
+        } else {
+
+            aux = binaryToDecimal(temp, INSTRUCTION_LENGHT);
+
+        }
+
+        dataInstructions[i] = aux;
+
+    }
+
+}
+
 int main() {
 
     char buffer[MAX_CHARACTERS];
@@ -1060,6 +1091,8 @@ int main() {
     }
 
     // reading data file
+    char **dataInstructionsAux;
+
     nptrs = NUMBER_POINTERS;
 
     int dataInstructionsSize = 0;
@@ -1074,7 +1107,7 @@ int main() {
 
         return 1;
 
-    } else if((dataInstructions = malloc(nptrs * sizeof *dataInstructions)) == NULL) {
+    } else if((dataInstructionsAux = malloc(nptrs * sizeof *dataInstructionsAux)) == NULL) {
 
         perror("malloc error");
 
@@ -1090,7 +1123,7 @@ int main() {
 
         if(dataInstructionsSize == nptrs) {
 
-            void *tmp = realloc(dataInstructions, (2 * nptrs) * sizeof *dataInstructions);
+            void *tmp = realloc(dataInstructionsAux, (2 * nptrs) * sizeof *dataInstructionsAux);
 
             if(!tmp) {
 
@@ -1100,13 +1133,13 @@ int main() {
 
             }
 
-            dataInstructions = tmp;
+            dataInstructionsAux = tmp;
 
             nptrs *= 2;
 
         }
 
-        if(!(dataInstructions[dataInstructionsSize] = malloc(size + 1))) {
+        if(!(dataInstructionsAux[dataInstructionsSize] = malloc(size + 1))) {
 
             perror ("malloc error");
 
@@ -1114,7 +1147,7 @@ int main() {
 
         }
 
-        memcpy(dataInstructions[dataInstructionsSize], buffer, size + 1);
+        memcpy(dataInstructionsAux[dataInstructionsSize], buffer, size + 1);
 
         dataInstructionsSize += 1;
 
@@ -1126,9 +1159,23 @@ int main() {
 
     }
 
+    dataInstructions = malloc(dataInstructionsSize);
+
+    convertDataInstructions(dataInstructionsAux, dataInstructionsSize);
+
+
+
+
+
+
+
+
+
+
+
     //printLines(textInstructions, textInstructionsSize);
 
-    //printLines(dataInstructions, dataInstructionsSize);
+    //printLines(dataInstructionsAux, dataInstructionsSize);
 
     // ALMACENAR VARIABLES DEL DATA
 
@@ -1197,12 +1244,16 @@ int main() {
 
     free(textInstructions);
 
+    /*
     // free memory
     for (size_t i = 0; i < dataInstructionsSize; i++) {
 
-        free(dataInstructions[i]);
+        free(dataInstructionsAux[i]);
 
     }
+    */
+
+    free(dataInstructionsAux);
 
     free(dataInstructions);
 

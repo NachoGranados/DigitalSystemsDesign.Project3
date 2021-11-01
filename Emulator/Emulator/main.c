@@ -29,12 +29,26 @@ const int ADDRESS_LENGHT = 26;
 // Color constant
 const int MAX_IMMEDIATE_VALUE = 65535;
 
+// Global arrays constants
+const int STACK_SIZE = 1000;
+const int STACK_POINTER_POSITION = 29;
+
+const int DYNAMIC_DATA_SIZE = 1000;
+const int DYNAMIC_DATA_POINTER_POSITION = 28;
+
+
 // Global variables
 int pc = 0;
 
+//int sp = 0; // min size
+
+//int gp = 999; // max size
+
 int *dataInstructions;
 
-int sp = 0;
+int *stack;
+
+int *dynamicData;
 
 /*
 registers[0]     -> $zero   -> The Constant Value 0
@@ -193,6 +207,23 @@ void lw(int rs, int rt, int SignExtImm) {
 
     // DEBE BUSCAR EN EL STACK
 
+    /*
+
+        lw $ra, 0($sp)
+
+        100011 11101 11111 0000000000000000
+        opcode rs    rt    immediate
+
+    */
+
+    int sp = registers[STACK_POINTER_POSITION];
+
+    int aux = sp + SignExtImm / 4;
+
+    int temp = stack[aux];
+
+    registers[rt] = temp;
+
 }
 
 /*
@@ -331,9 +362,26 @@ int sh(int rs, int SignExtImm) { NO ESTA
 }
 */
 
-void sw(int rs, int SignExtImm) {
+void sw(int rs, int rt, int SignExtImm) {
 
     // DEBE BUSCAR EN EL STACK
+
+    /*
+
+            rt     rs
+        sw $ra, 0($sp)
+
+        101011 11101 11111 0000000000000000
+        opcode rs    rt    immediate
+
+    */
+
+    int sp = registers[STACK_POINTER_POSITION];
+
+    int aux = sp + SignExtImm / 4;
+
+    stack[aux] = registers[rt];
+
 
 }
 
@@ -605,7 +653,7 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "sltu");
 
-            //sltu(rs, rt, rd);
+            sltu(rs, rt, rd);
 
             break;
 
@@ -804,6 +852,10 @@ void instructionI(char *instruction) {
 
                     immediate /= 4;
 
+                    li(rt, dataInstructions[immediate]);
+
+                    /*
+
                     if(dataInstructions[immediate] < MAX_IMMEDIATE_VALUE) {
 
                         li(rt, dataInstructions[immediate]);
@@ -812,17 +864,18 @@ void instructionI(char *instruction) {
 
                         // SE CARGA UN COLOR
 
-                        // TOMAR EN CUENTA EL BLANCO QUE ES 0x00000000
+                        // TOMAR EN CUENTA EL NEGRO QUE ES 0x00000000
 
                         //li(rt, dataInstructions[immediate]);
 
                     }
 
+                    */
+
                 }
 
+            // stack use
             } else if(rs == 29) {
-
-                // USO DEL STACK
 
                 lw(rs, rt, immediate);
 
@@ -906,11 +959,10 @@ void instructionI(char *instruction) {
 
                     dataInstructions[immediate] = registers[rt];
 
+                // stack use
                 } else {
 
-                    // USO DEL STACK
-
-                    //sw()
+                    sw(rs, rt, immediate);
 
                 }
 
@@ -1164,20 +1216,22 @@ int main() {
     convertDataInstructions(dataInstructionsAux, dataInstructionsSize);
 
 
+    // creating stack array
+    stack = malloc(STACK_SIZE * sizeof(int));
 
+    registers[STACK_POINTER_POSITION] = 999;
 
+    // creating dynamic data array
+    dynamicData = malloc(DYNAMIC_DATA_SIZE * sizeof(int));
 
-
-
-
-
-
+    registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
 
     //printLines(textInstructions, textInstructionsSize);
 
     //printLines(dataInstructionsAux, dataInstructionsSize);
 
-    // ALMACENAR VARIABLES DEL DATA
+
+
 
     // text instructions execution
     while(pc < textInstructionsSize) {
@@ -1257,8 +1311,22 @@ int main() {
 
     free(dataInstructions);
 
+    free(stack);
+
+    free(dynamicData);
+
 }
 
+/*
+
+
+    7fff fffc => 2147483644
+
+    1000 8000h => 268468224
+
+    2147483644 - 268468224 = 1879015420
+
+    1879015420 / 4 = 469753855
 
 
 
@@ -1293,5 +1361,4 @@ int main() {
 
 
 
-
-
+*/

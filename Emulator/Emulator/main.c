@@ -30,25 +30,16 @@ const int ADDRESS_LENGHT = 26;
 const int MAX_IMMEDIATE_VALUE = 65535;
 
 // Global arrays constants
-const int STACK_SIZE = 1000;
-const int STACK_POINTER_POSITION = 29;
-
-const int DYNAMIC_DATA_SIZE = 1000;
+const int MEMORY_SIZE = 2000;
 const int DYNAMIC_DATA_POINTER_POSITION = 28;
-
+const int STACK_POINTER_POSITION = 29;
 
 // Global variables
 int pc = 0;
 
-//int sp = 0; // min size
-
-//int gp = 999; // max size
-
 int *dataInstructions;
 
-int *stack;
-
-int *dynamicData;
+int *memory;
 
 /*
 registers[0]     -> $zero   -> The Constant Value 0
@@ -220,7 +211,7 @@ void lw(int rs, int rt, int SignExtImm) {
 
     int aux = sp + SignExtImm / 4;
 
-    int temp = stack[aux];
+    int temp = memory[aux];
 
     registers[rt] = temp;
 
@@ -380,7 +371,7 @@ void sw(int rs, int rt, int SignExtImm) {
 
     int aux = sp + SignExtImm / 4;
 
-    stack[aux] = registers[rt];
+    memory[aux] = registers[rt];
 
 
 }
@@ -721,6 +712,13 @@ void instructionI(char *instruction) {
 
             }
 
+            // reserve or free space in the stack
+            if(rs == STACK_POINTER_POSITION && rt == STACK_POINTER_POSITION) {
+
+                immediate /= 4;
+
+            }
+
             addi(rs, rt, immediate);
 
             break;
@@ -1001,7 +999,7 @@ void instructionJ(char *instruction) {
     //int address;
 
     sliceInstruction(instruction, opcodeChar, 0, 6);
-    sliceInstruction(instruction, addressChar, 6, 32);
+    sliceInstruction(instruction, addressChar, 12, 32);
 
     opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
     //address = binaryToDecimal(addressChar, ADDRESS_LENGHT);
@@ -1215,6 +1213,7 @@ int main() {
 
     convertDataInstructions(dataInstructionsAux, dataInstructionsSize);
 
+    /*
 
     // creating stack array
     stack = malloc(STACK_SIZE * sizeof(int));
@@ -1225,6 +1224,17 @@ int main() {
     dynamicData = malloc(DYNAMIC_DATA_SIZE * sizeof(int));
 
     registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
+
+    */
+
+    // creating memory array
+    memory = malloc(MEMORY_SIZE * sizeof(int));
+
+    // global pointer must be positioned at the start of the memory array
+    registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
+
+    // stack pointer must be positioned at the end of the memory array
+    registers[STACK_POINTER_POSITION] = 1999;
 
     //printLines(textInstructions, textInstructionsSize);
 
@@ -1280,6 +1290,8 @@ int main() {
 
         pc++;
 
+
+
         /*
         int testInteger;
         printf("Continue:");
@@ -1311,9 +1323,11 @@ int main() {
 
     free(dataInstructions);
 
-    free(stack);
+    free(memory);
 
-    free(dynamicData);
+    //free(stack);
+
+    //free(dynamicData);
 
 }
 
@@ -1327,6 +1341,33 @@ int main() {
     2147483644 - 268468224 = 1879015420
 
     1879015420 / 4 = 469753855
+
+
+
+    000011 00000100000000001001010110
+
+    1049174 / 4 = 262293
+
+
+
+    000001 00000000000000000000 => j ClearBoard
+
+    000001 00000000001001010110 => j NewGame
+
+    000001 00000000001011000010 => j Reset
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

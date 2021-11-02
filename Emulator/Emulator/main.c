@@ -57,6 +57,125 @@ registers[31]    -> $ra 31  -> Return Address
 */
 int registers[32];
 
+void sliceInstruction(char *instruction, char *slice, int start, int end) {
+
+    int j = 0;
+
+    for (int i = start; i < end; i++) {
+
+        slice[j] = instruction[i];
+
+        j++;
+
+    }
+
+}
+
+void complement2(char *instruction, int length) {
+
+    char temp[1];
+    char *aux;
+
+    for(int i = 0; i < length; i++) {
+
+        sliceInstruction(instruction, temp, i, i + 1);
+
+        if(strcmp(temp, "0") == 0) {
+
+            aux = "1";
+
+            instruction[i] = *aux;
+
+        } else if(strcmp(temp, "1") == 0) {
+
+            aux = "0";
+
+            instruction[i] = *aux;
+
+        }
+
+    }
+
+}
+
+int binaryToDecimal(char *binary, int lenght) {
+
+    int decimal = 0;
+
+    int exp = lenght - 1;
+
+    char temp[1];
+
+    for(int i = 0; i < lenght; i++) {
+
+        sliceInstruction(binary, temp, i, i + 1);
+
+        if(strcmp(temp, "1") == 0) {
+
+            decimal += pow(2, exp);
+
+        }
+
+        exp--;
+
+    }
+
+	return decimal;
+
+}
+
+void decimalToBinary(int decimal, char *binary) {
+
+    int i = 0;
+
+    char *aux;
+
+    while (decimal > 0) {
+
+        if(decimal % 2 == 0) {
+
+            aux = "0";
+
+            binary[i] = *aux;
+
+        } else {
+
+            aux = "1";
+
+            binary[i] = *aux;
+
+        }
+
+        decimal /= 2;
+
+        i++;
+
+    }
+
+}
+
+int isNegative(char *instruction) {
+
+    int result = 0;
+
+    int aux;
+
+    char temp[1];
+
+    sliceInstruction(instruction, temp, 0, 1);
+
+    aux = binaryToDecimal(temp, 1);
+
+    if(aux == 1) {
+
+        result = 1;
+
+    }
+
+    return result;
+
+}
+
 void add(int rs, int rt, int rd) {
 
     int aux = registers[rs] + registers[rt];
@@ -113,11 +232,15 @@ int andi(int rs, int ZeroExtImm) { NO ESTA
 
 void beq(int rs, int rt) {
 
+    /*
+
     if(registers[rs] == registers[rt]) {
 
         //pc = pc + 1 +
 
     }
+
+    */
 
 }
 
@@ -238,16 +361,98 @@ int or(int rs, int rt) { NO ESTA
 
 }
 
-int ori(int rs, int ZeroExtImm) { NO ESTA
+*/
 
-    int rt = 0;
+void ori(int rs, int rt, int rd) {
 
-    // ...
+    /*
 
-    return rt;
+        xori $t4, $t4, 0xffffffff
+
+        Type I
+        pc = 592
+        opcode = 001101 => Type I
+        rs = 00001 => $at
+        rt = 00001 => $at
+        immediate = 1111111111111111 => ffff
+        ori =>
+
+        Type R
+        pc = 593
+        opcode = 000000 => Type R
+        rs = 01100 => $t4
+        rt = 00001 => $at
+        rd = 01100 => $t4
+        shamt = 00000 => X
+        funct = 100110 => 26 hex => 38 dec
+
+    */
+
+    char tempRs[IMMEDIATE_LENGHT];
+
+    char tempRt[IMMEDIATE_LENGHT];
+
+    char tempRd[IMMEDIATE_LENGHT];
+
+    decimalToBinary(registers[rs], tempRs);
+
+    decimalToBinary(registers[rt], tempRt);
+
+    char auxTempRs[1];
+
+    char auxTempRt[1];
+
+    char *auxChar;
+
+    for(int i = 0; i < IMMEDIATE_LENGHT; i++) {
+
+        sliceInstruction(tempRs, auxTempRs, i, i + 1);
+
+        sliceInstruction(tempRt, auxTempRt, i, i + 1);
+
+        if(strcmp(auxTempRs, auxTempRt) == 0) {
+
+            tempRd[i] = *auxTempRs;
+
+        } else if((strcmp(auxTempRs, "1") == 0) | (strcmp(auxTempRt, "1") == 0)) {
+
+            auxChar = "1";
+
+            tempRd[i] = *auxChar;
+
+        } else {
+
+            auxChar = "0";
+
+            tempRd[i] = *auxChar;
+
+        }
+
+    }
+
+    int auxInt = binaryToDecimal(tempRd, IMMEDIATE_LENGHT);
+
+    registers[rd] = auxInt;
+
+    /*
+
+    printf ("rs = %d\n", rs);
+    printf ("rt = %d\n", rt);
+    printf ("rd = %d\n", rd);
+
+    printf ("rsInt = %d\n", registers[rs]);
+    printf ("rtInt = %d\n", registers[rt]);
+    printf ("rdInt = %d\n", registers[rd]);
+
+    printf ("rsChar = %s\n", tempRs);
+    printf ("rtChar = %s\n", tempRt);
+    printf ("rdChar = %s\n", tempRd);
+
+    printf ("auxInt = %d\n", auxInt);
+
+    */
 
 }
-*/
 
 void slt(int rs, int rt, int rd) {
 
@@ -420,88 +625,17 @@ void move(int rs, int rd) {
 
 }
 
-void sliceInstruction(char *instruction, char *slice, int start, int end) {
+void xori(int rs, int rt, int SignExtImm) {
 
-    int j = 0;
+    if(registers[rs] == SignExtImm) {
 
-    for (int i = start; i < end; i++) {
+        registers[rt] = 0;
 
-        slice[j] = instruction[i];
+    } else {
 
-        j++;
-
-    }
-
-}
-
-void complement2(char *instruction, int length) {
-
-    char temp[1];
-    char *aux;
-
-    for(int i = 0; i < length; i++) {
-
-        sliceInstruction(instruction, temp, i, i + 1);
-
-        if(strcmp(temp, "0") == 0) {
-
-            aux = "1";
-
-            instruction[i] = *aux;
-
-        } else if(strcmp(temp, "1") == 0) {
-
-            aux = "0";
-
-            instruction[i] = *aux;
-
-        }
+        registers[rt] = 1;
 
     }
-
-}
-
-int binaryToDecimal(char binary[], int length) {
-
-	int decimal = 0;
-
-	int position = 0;
-
-	int index = length - 1;
-
-	while (index >= 0) {
-
-		decimal = decimal + (binary[index] - 48) * pow(2, position);
-
-		index--;
-
-		position++;
-
-	}
-
-	return decimal;
-
-}
-
-int isNegative(char *instruction) {
-
-    int result = 0;
-
-    int aux;
-
-    char temp[1];
-
-    sliceInstruction(instruction, temp, 0, 1);
-
-    aux = binaryToDecimal(temp, 1);
-
-    if(aux == 1) {
-
-        result = 1;
-
-    }
-
-    return result;
 
 }
 
@@ -514,7 +648,7 @@ void instructionR(char *instruction) {
     char shamtChar[SHAMT_LENGHT];
     char functChar[FUNCT_LENGHT];
 
-    //int opcode;
+    int opcode;
     int rs;
     int rt;
     int rd;
@@ -528,19 +662,19 @@ void instructionR(char *instruction) {
     sliceInstruction(instruction, shamtChar, 21, 26);
     sliceInstruction(instruction,functChar, 26, 32);
 
-    //opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
-    rs = binaryToDecimal(rsChar, FUNCT_LENGHT);
-    rt = binaryToDecimal(rtChar, FUNCT_LENGHT);
-    rd = binaryToDecimal(rdChar, FUNCT_LENGHT);
-    shamt = binaryToDecimal(shamtChar, FUNCT_LENGHT);
+    opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
+    rs = binaryToDecimal(rsChar, RS_LENGHT);
+    rt = binaryToDecimal(rtChar, RT_LENGHT);
+    rd = binaryToDecimal(rdChar, RD_LENGHT);
+    shamt = binaryToDecimal(shamtChar, SHAMT_LENGHT);
     funct = binaryToDecimal(functChar, FUNCT_LENGHT);
 
-    printf ("opcode = %s\n", opcodeChar);
-    printf ("rs = %s\n", rsChar);
-    printf ("rt = %s\n", rtChar);
-    printf ("rd = %s\n", rdChar);
-    printf ("shamt = %s\n", shamtChar);
-    printf ("funct = %s\n", functChar);
+    printf ("opcode = %s (%d)\n", opcodeChar, opcode);
+    printf ("rs = %s (%d)\n", rsChar, rs);
+    printf ("rt = %s (%d)\n", rtChar, rt);
+    printf ("rd = %s (%d)\n", rdChar, rd);
+    printf ("shamt = %s (%d)\n", shamtChar, shamt);
+    printf ("funct = %s (%d)\n", functChar, funct);
 
     switch(funct) {
 
@@ -624,6 +758,38 @@ void instructionR(char *instruction) {
 
             break;
 
+        // aux method for ori
+        case 38:
+
+            printf("%s\n", "xori");
+
+            /*
+
+                xori $t4, $t4, 0xffffffff
+
+                Type I
+                pc = 592
+                opcode = 001101 => Type I
+                rs = 00001 => $at
+                rt = 00001 => $at
+                immediate = 1111111111111111 => ffff
+                ori =>
+
+                Type R
+                pc = 593
+                opcode = 000000 => Type R
+                rs = 01100 => $t4
+                rt = 00001 => $at
+                rd = 01100 => $t4
+                shamt = 00000 => X
+                funct = 100110 => 26 hex => 38 dec
+
+            */
+
+            ori(rs, rt, rd);
+
+            break;
+
         case 39:
 
             printf("%s\n", "nor");
@@ -676,10 +842,10 @@ void instructionI(char *instruction) {
     rt = binaryToDecimal(rtChar, RT_LENGHT);
     immediate = binaryToDecimal(immediateChar, IMMEDIATE_LENGHT);
 
-    printf ("opcode = %s\n", opcodeChar);
-    printf ("rs = %s\n", rsChar);
-    printf ("rt = %s\n", rtChar);
-    printf ("immediate = %s\n", immediateChar);
+    printf ("opcode = %s (%d)\n", opcodeChar, opcode);
+    printf ("rs = %s (%d)\n", rsChar, rs);
+    printf ("rt = %s (%d)\n", rtChar, rt);
+    printf ("immediate = %s (%d)\n", immediateChar, immediate);
 
     switch(opcode){
 
@@ -812,7 +978,30 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "ori");
 
-            //ori()
+            /*
+
+                xori $t4, $t4, 0xffffffff
+
+                Type I
+                pc = 592
+                opcode = 001101 => Type I
+                rs = 00001 => $at
+                rt = 00001 => $at
+                immediate = 1111111111111111 => ffff
+                ori =>
+
+                Type R
+                pc = 593
+                opcode = 000000 => Type R
+                rs = 01100 => $t4
+                rt = 00001 => $at
+                rd = 01100 => $t4
+                shamt = 00000 => X
+                funct = 100110 => 26 hex => 38 dec
+
+            */
+
+            registers[rt] = immediate;
 
             break;
 
@@ -996,16 +1185,16 @@ void instructionJ(char *instruction) {
     char addressChar[ADDRESS_LENGHT];
 
     int opcode;
-    //int address;
+    int address;
 
     sliceInstruction(instruction, opcodeChar, 0, 6);
     sliceInstruction(instruction, addressChar, 12, 32);
 
     opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
-    //address = binaryToDecimal(addressChar, ADDRESS_LENGHT);
+    address = binaryToDecimal(addressChar, ADDRESS_LENGHT);
 
-    printf ("opcode = %s\n", opcodeChar);
-    printf ("address = %s\n", addressChar);
+    printf ("opcode = %s (%d)\n", opcodeChar, opcode);
+    printf ("address = %s (%d)\n", addressChar, address);
 
    switch(opcode) {
 
@@ -1213,20 +1402,6 @@ int main() {
 
     convertDataInstructions(dataInstructionsAux, dataInstructionsSize);
 
-    /*
-
-    // creating stack array
-    stack = malloc(STACK_SIZE * sizeof(int));
-
-    registers[STACK_POINTER_POSITION] = 999;
-
-    // creating dynamic data array
-    dynamicData = malloc(DYNAMIC_DATA_SIZE * sizeof(int));
-
-    registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
-
-    */
-
     // creating memory array
     memory = malloc(MEMORY_SIZE * sizeof(int));
 
@@ -1235,6 +1410,9 @@ int main() {
 
     // stack pointer must be positioned at the end of the memory array
     registers[STACK_POINTER_POSITION] = 1999;
+
+
+
 
     //printLines(textInstructions, textInstructionsSize);
 
@@ -1291,6 +1469,15 @@ int main() {
         pc++;
 
 
+        /*
+
+        if(pc > 593) {
+
+            pc = 4444;
+
+        }
+
+        */
 
         /*
         int testInteger;
@@ -1350,9 +1537,9 @@ int main() {
 
 
 
-    000001 00000000000000000000 => j ClearBoard
+    000001 00000000000000000000 => j NewGame
 
-    000001 00000000001001010110 => j NewGame
+    000001 00000000001001010110 => j ClearBoard
 
     000001 00000000001011000010 => j Reset
 
@@ -1369,6 +1556,151 @@ int main() {
 
 
 
+
+    lw $t4, yDir
+    xori $t4, $t4, 0xffffffff
+    addi $t4, $t4, 1
+    sw $t4, yDir
+
+
+
+
+
+    Type I
+    pc = 589
+    opcode = 001111
+    rs = 00000
+    rt = 00001
+    immediate = 0001000000000001
+    lui => X
+
+    Type I
+    pc = 590
+    opcode = 100011
+    rs = 00001
+    rt = 01100
+    immediate = 0000000000001000
+    lw => lw $t4, yDir
+
+    Type I
+    pc = 591
+    opcode = 001111
+    rs = 00000
+    rt = 00001
+    immediate = 1111111111111111
+    lui => X
+
+
+
+
+    xori $t4, $t4, 0xffffffff
+
+    Type I
+    pc = 592
+    opcode = 001101 => Type I
+    rs = 00001 => $at
+    rt = 00001 => $at
+    immediate = 1111111111111111 => ffff
+    ori =>
+
+    Type R
+    pc = 593
+    opcode = 000000 => Type R
+    rs = 01100 => $t4
+    rt = 00001 => $at
+    rd = 01100 => $t4
+    shamt = 00000 => X
+    funct = 100110 => 26 hex
+
+
+
+
+
+
+    Type I
+    pc = 594
+    opcode = 001000
+    rs = 01100
+    rt = 01100
+    immediate = 0000000000000001
+    addi
+
+    Type I
+    pc = 595
+    opcode = 001111
+    rs = 00000
+    rt = 00001
+    immediate = 0001000000000001
+    lui
+
+    Type I
+    pc = 596
+    opcode = 101011
+    rs = 00001
+    rt = 01100
+    immediate = 0000000000001000
+    sw
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #include <stdio.h>
+    #include <stdlib.h>
+
+    char *decimal_to_binary(int);
+
+    int main()
+    {
+      int n;
+      char *p;
+
+      printf("Enter an integer in decimal number system\n");
+      scanf("%d", &n);
+
+      p = decimal_to_binary(n);
+      printf("Binary string of %d is: %s\n", n, p);
+
+      free(p);
+
+      return 0;
+    }
+
+    char *decimal_to_binary(int n)
+    {
+      int c, d, t;
+      char *p;
+
+      t = 0;
+      p = (char*)malloc(32+1);
+
+      if (p == NULL)
+        exit(EXIT_FAILURE);
+
+      for (c = 31 ; c >= 0 ; c--)
+      {
+        d = n >> c;
+
+        if (d & 1)
+          *(p+t) = 1 + '0';
+        else
+          *(p+t) = 0 + '0';
+
+        t++;
+      }
+      *(p+t) = '\0';
+
+      return  p;
+    }
 
 
 

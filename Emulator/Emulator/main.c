@@ -236,7 +236,7 @@ void beq(int rs, int rt) {
 
     if(registers[rs] == registers[rt]) {
 
-        //pc = pc + 1 +
+        pc = pc + 1 - 5;
 
     }
 
@@ -246,11 +246,11 @@ void beq(int rs, int rt) {
 
 void bne(int rs, int rt) {
 
-    //int result = 0;
+    if(registers[rs] != registers[rt]) {
 
-    // ...
+        pc = pc + 1 +  5;   //pc + 4
 
-    //return result;
+    }
 
 }
 
@@ -1405,6 +1405,7 @@ int main() {
     // creating memory array
     memory = malloc(MEMORY_SIZE * sizeof(int));
 
+<<<<<<< Updated upstream
     // global pointer must be positioned at the start of the memory array
     registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
 
@@ -1414,6 +1415,8 @@ int main() {
 
 
 
+=======
+>>>>>>> Stashed changes
     //printLines(textInstructions, textInstructionsSize);
 
     //printLines(dataInstructionsAux, dataInstructionsSize);
@@ -1517,6 +1520,7 @@ int main() {
     //free(dynamicData);
 
 }
+<<<<<<< Updated upstream
 
 /*
 
@@ -1735,3 +1739,5 @@ int main() {
 
 
 */
+=======
+>>>>>>> Stashed changes

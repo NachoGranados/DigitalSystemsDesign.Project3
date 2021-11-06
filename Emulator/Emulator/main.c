@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 
 // Read file constants
 const int MAX_CHARACTERS = 34;
@@ -668,6 +669,23 @@ void xori(int rs, int rt, int SignExtImm) {
 
 }
 
+void syscallWait() {
+
+   // register $a0
+   int miliseconds = registers[4];
+
+   clock_t end_time;
+
+   end_time = clock() + miliseconds * CLOCKS_PER_SEC / 1000;
+
+   while (clock() < end_time) {
+
+      //blank loop for waiting
+
+   }
+
+}
+
 void instructionR(char *instruction) {
 
     char opcodeChar[OPCODE_LENGHT];
@@ -735,7 +753,7 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "syscall");
 
-            //syscall();
+            syscallWait();
 
             break;
 
@@ -1429,7 +1447,7 @@ int main() {
 
         /*
 
-        if(pc > 665) {
+        if(pc > 1) {
 
             pc = 4444;
 
@@ -1858,6 +1876,15 @@ int main() {
 
 
 
+    Type R
+    pc = 701
+    opcode = 000000 (0)
+    rs = 00000 (0)
+    rt = 00000 (0)
+    rd = 00000 (0)
+    shamt = 00000 (0)
+    funct = 001100 (12)
+    syscall
 
 
 

@@ -208,52 +208,125 @@ void addu(int rs, int rt, int rd) {
 
 }
 
-/*
-int and(int rs, int rt) { NO ESTA
+void and(int rs, int rt, int rd) {
 
-    int rd = 0;
+    char tempRs[IMMEDIATE_LENGHT];
 
-    // ...
+    char tempRt[IMMEDIATE_LENGHT];
 
-    return rd;
+    char tempRd[IMMEDIATE_LENGHT];
+
+    decimalToBinary(registers[rs], tempRs);
+
+    decimalToBinary(registers[rt], tempRt);
+
+    char auxTempRs[1];
+
+    char auxTempRt[1];
+
+    char *auxChar;
+
+    for(int i = 0; i < IMMEDIATE_LENGHT; i++) {
+
+        sliceInstruction(tempRs, auxTempRs, i, i + 1);
+
+        sliceInstruction(tempRt, auxTempRt, i, i + 1);
+
+        if(strcmp(auxTempRs, auxTempRt) == 0) {
+
+            tempRd[i] = *auxTempRs;
+
+        } else if((strcmp(auxTempRs, "0") == 0) | (strcmp(auxTempRt, "0") == 0)) {
+
+            auxChar = "0";
+
+            tempRd[i] = *auxChar;
+
+        } else {
+
+            auxChar = "1";
+
+            tempRd[i] = *auxChar;
+
+        }
+
+    }
+
+    int auxInt = binaryToDecimal(tempRd, IMMEDIATE_LENGHT);
+
+    registers[rd] = auxInt;
 
 }
 
-int andi(int rs, int ZeroExtImm) { NO ESTA
-    int rt = 0;
+void andi(int rs, int rt, int ZeroExtImm) {
 
-    // ...
+    char tempRs[IMMEDIATE_LENGHT];
 
-    return rt;
+    char tempRt[IMMEDIATE_LENGHT];
+
+    char tempZeroExtImm[IMMEDIATE_LENGHT];
+
+    decimalToBinary(registers[rs], tempRs);
+
+    decimalToBinary(ZeroExtImm, tempZeroExtImm);
+
+    char auxTempRs[1];
+
+    char auxTempZeroExtImm[1];
+
+    char *auxChar;
+
+    for(int i = 0; i < IMMEDIATE_LENGHT; i++) {
+
+        sliceInstruction(tempRs, auxTempRs, i, i + 1);
+
+        sliceInstruction(tempZeroExtImm, auxTempZeroExtImm, i, i + 1);
+
+        if(strcmp(auxTempRs, auxTempZeroExtImm) == 0) {
+
+            tempRt[i] = *auxTempRs;
+
+        } else if((strcmp(auxTempRs, "0") == 0) | (strcmp(auxTempZeroExtImm, "0") == 0)) {
+
+            auxChar = "0";
+
+            tempRt[i] = *auxChar;
+
+        } else {
+
+            auxChar = "1";
+
+            tempRt[i] = *auxChar;
+
+        }
+
+    }
+
+    int auxInt = binaryToDecimal(tempRt, IMMEDIATE_LENGHT);
+
+    registers[rt] = auxInt;
 
 }
-*/
 
-
-void beq(int rs, int rt) {
-
-    /*
+void beq(int rs, int rt, int SignExtImm) {
 
     if(registers[rs] == registers[rt]) {
 
-        pc = pc + 1 - 5;
+        pc = pc + 1 + SignExtImm;
 
     }
 
-    */
-
 }
 
-void bne(int rs, int rt) {
+void bne(int rs, int rt, int SignExtImm) {
 
     if(registers[rs] != registers[rt]) {
 
-        pc = pc + 1 +  5;   //pc + 4
+        pc = pc + 1 + SignExtImm;
 
     }
 
 }
-
 
 void j(int JumpAddr) {
 
@@ -263,7 +336,7 @@ void j(int JumpAddr) {
 
 void jal(int JumpAddr) {
 
-    registers[31] = pc + 2; // pc + 8
+    registers[31] = pc + 2;
 
     pc = JumpAddr;
 
@@ -275,60 +348,31 @@ void jr(int rs) {
 
 }
 
-/*
-int lbu(int rs, int SignExtImm) { NO ESTA
+void lbu(int rs, int rt, int SignExtImm) {
 
-    int rt = 0;
-
-    // ...
-
-    return rt;
+    registers[rt] = registers[rs] + SignExtImm;
 
 }
 
-int lhu(int rs, int SignExtImm) { NO ESTA
+void lhu(int rs, int rt, int SignExtImm) {
 
-    int rt = 0;
-
-    // ...
-
-    return rt;
+    registers[rt] = registers[rs] + SignExtImm;
 
 }
 
-int ll(int rs, int SignExtImm) { NO ESTA
+void ll(int rs, int rt, int SignExtImm) {
 
-    int rt = 0;
-
-    // ...
-
-    return rt;
+    registers[rt] = registers[rs] + SignExtImm;
 
 }
 
-int lui(int imm) { NO ESTA
+void lui(int rs, int rt, int SignExtImm) {
 
-    int rt = 0;
-
-    // ...
-
-    return rt;
+    registers[rt] = registers[rs] + SignExtImm;
 
 }
-*/
 
 void lw(int rs, int rt, int SignExtImm) {
-
-    // DEBE BUSCAR EN EL STACK
-
-    /*
-
-        lw $ra, 0($sp)
-
-        100011 11101 11111 0000000000000000
-        opcode rs    rt    immediate
-
-    */
 
     int sp = registers[STACK_POINTER_POSITION];
 
@@ -340,53 +384,99 @@ void lw(int rs, int rt, int SignExtImm) {
 
 }
 
-/*
-int nor(int rs, int rt) { NO ESTA
+void nor(int rs, int rt, int rd) {
 
-    int rd = 0;
+    char tempRs[IMMEDIATE_LENGHT];
 
-    // ...
+    char tempRt[IMMEDIATE_LENGHT];
 
-    return rd;
+    char tempRd[IMMEDIATE_LENGHT];
+
+    decimalToBinary(registers[rs], tempRs);
+
+    decimalToBinary(registers[rt], tempRt);
+
+    char auxTempRs[1];
+
+    char auxTempRt[1];
+
+    char *auxChar;
+
+    for(int i = 0; i < IMMEDIATE_LENGHT; i++) {
+
+        sliceInstruction(tempRs, auxTempRs, i, i + 1);
+
+        sliceInstruction(tempRt, auxTempRt, i, i + 1);
+
+        if((strcmp(auxTempRs, "1") == 0) | (strcmp(auxTempRt, "1") == 0)) {
+
+            auxChar = "0";
+
+            tempRd[i] = *auxChar;
+
+        } else {
+
+            auxChar = "1";
+
+            tempRd[i] = *auxChar;
+
+        }
+
+    }
+
+    int auxInt = binaryToDecimal(tempRd, IMMEDIATE_LENGHT);
+
+    registers[rd] = auxInt;
 
 }
 
-int or(int rs, int rt) { NO ESTA
+void or(int rs, int rt, int rd) {
 
-    int rd = 0;
+    char tempRs[IMMEDIATE_LENGHT];
 
-    // ...
+    char tempRt[IMMEDIATE_LENGHT];
 
-    return rd;
+    char tempRd[IMMEDIATE_LENGHT];
+
+    decimalToBinary(registers[rs], tempRs);
+
+    decimalToBinary(registers[rt], tempRt);
+
+    char auxTempRs[1];
+
+    char auxTempRt[1];
+
+    char *auxChar;
+
+    for(int i = 0; i < IMMEDIATE_LENGHT; i++) {
+
+        sliceInstruction(tempRs, auxTempRs, i, i + 1);
+
+        sliceInstruction(tempRt, auxTempRt, i, i + 1);
+
+        if((strcmp(auxTempRs, "1") == 0) | (strcmp(auxTempRt, "1") == 0)) {
+
+            auxChar = "1";
+
+            tempRd[i] = *auxChar;
+
+        } else {
+
+            auxChar = "0";
+
+            tempRd[i] = *auxChar;
+
+        }
+
+    }
+
+    int auxInt = binaryToDecimal(tempRd, IMMEDIATE_LENGHT);
+
+    registers[rd] = auxInt;
 
 }
-
-*/
 
 void ori(int rs, int rt, int rd) {
-
-    /*
-
-        xori $t4, $t4, 0xffffffff
-
-        Type I
-        pc = 592
-        opcode = 001101 => Type I
-        rs = 00001 => $at
-        rt = 00001 => $at
-        immediate = 1111111111111111 => ffff
-        ori =>
-
-        Type R
-        pc = 593
-        opcode = 000000 => Type R
-        rs = 01100 => $t4
-        rt = 00001 => $at
-        rd = 01100 => $t4
-        shamt = 00000 => X
-        funct = 100110 => 26 hex => 38 dec
-
-    */
 
     char tempRs[IMMEDIATE_LENGHT];
 
@@ -433,24 +523,6 @@ void ori(int rs, int rt, int rd) {
     int auxInt = binaryToDecimal(tempRd, IMMEDIATE_LENGHT);
 
     registers[rd] = auxInt;
-
-    /*
-
-    printf ("rs = %d\n", rs);
-    printf ("rt = %d\n", rt);
-    printf ("rd = %d\n", rd);
-
-    printf ("rsInt = %d\n", registers[rs]);
-    printf ("rtInt = %d\n", registers[rt]);
-    printf ("rdInt = %d\n", registers[rd]);
-
-    printf ("rsChar = %s\n", tempRs);
-    printf ("rtChar = %s\n", tempRt);
-    printf ("rdChar = %s\n", tempRd);
-
-    printf ("auxInt = %d\n", auxInt);
-
-    */
 
 }
 
@@ -526,58 +598,31 @@ void srl(int rt, int rd, int shamt) {
 
 }
 
-/*
-int sb(int rs, int SignExtImm) { NO ESTA
+void sb(int rs, int rt, int SignExtImm) {
 
-    int rt = 0;
-
-    // ...
-
-    return rt;
+    registers[rt] = registers[rs] + SignExtImm;
 
 }
 
-int sc(int rs, int SignExtImm) { NO ESTA
+void sc(int rs, int rt, int SignExtImm) {
 
-    int rt = 0;
-
-    // ...
-
-    return rt;
+    registers[rt] = registers[rs] + SignExtImm;
 
 }
 
-int sh(int rs, int SignExtImm) { NO ESTA
+void sh(int rs, int rt, int SignExtImm) {
 
-    int rt = 0;
-
-    // ...
-
-    return rt;
+    registers[rt] = registers[rs] + SignExtImm;
 
 }
-*/
 
 void sw(int rs, int rt, int SignExtImm) {
-
-    // DEBE BUSCAR EN EL STACK
-
-    /*
-
-            rt     rs
-        sw $ra, 0($sp)
-
-        101011 11101 11111 0000000000000000
-        opcode rs    rt    immediate
-
-    */
 
     int sp = registers[STACK_POINTER_POSITION];
 
     int aux = sp + SignExtImm / 4;
 
     memory[aux] = registers[rt];
-
 
 }
 
@@ -594,22 +639,6 @@ void subu(int rs, int rt, int rd) {
     int aux = registers[rs] - registers[rt];
 
     registers[rd] = aux;
-
-}
-
-void blt() {
-
-}
-
-void bgt() {
-
-}
-
-void ble() {
-
-}
-
-void bge() {
 
 }
 
@@ -746,7 +775,7 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "and");
 
-            //and()
+            and(rs, rt, rd);
 
             break;
 
@@ -754,7 +783,7 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "or");
 
-            //or()
+            or(rs, rt, rd);
 
             break;
 
@@ -762,29 +791,6 @@ void instructionR(char *instruction) {
         case 38:
 
             printf("%s\n", "xori");
-
-            /*
-
-                xori $t4, $t4, 0xffffffff
-
-                Type I
-                pc = 592
-                opcode = 001101 => Type I
-                rs = 00001 => $at
-                rt = 00001 => $at
-                immediate = 1111111111111111 => ffff
-                ori =>
-
-                Type R
-                pc = 593
-                opcode = 000000 => Type R
-                rs = 01100 => $t4
-                rt = 00001 => $at
-                rd = 01100 => $t4
-                shamt = 00000 => X
-                funct = 100110 => 26 hex => 38 dec
-
-            */
 
             ori(rs, rt, rd);
 
@@ -794,7 +800,7 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "nor");
 
-            //nor()
+            nor(rs, rt, rd);
 
             break;
 
@@ -853,7 +859,16 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "beq");
 
-            //beq()
+            // negative number
+            if(isNegative(immediateChar) == 1) {
+
+                complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+            }
+
+            //beq(rs, rt, immediate);
 
             break;
 
@@ -861,7 +876,16 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "bne");
 
-            //bne()
+            // negative number
+            if(isNegative(immediateChar) == 1) {
+
+                complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+            }
+
+            //bne(rs, rt, immediate);
 
             break;
 
@@ -892,41 +916,6 @@ void instructionI(char *instruction) {
         case 9:
 
             printf("%s\n", "addiu o li");
-
-            /*
-
-            100011 00001 01001 0000000000000100 => lw $t1, 0xFFFF0004
-            001000 00000 00001 0000000000110001 => addi $at, $zero, 49 => ??????????
-            000100 00001 01001 0000000000000110 => beq $t1, 0x00000031, SetOnePlayerMode
-            001000 00000 00001 0000000000110010 => addi $at, $zero, 50 => ??????????
-            000100 00001 01001 0000000000000110 => beq $t1, 0x00000032, SetTwoPlayerMode
-            001001 00000 00100 0000000011111010 => li $a0, 250
-            001001 00000 00010 0000000000100000 => li $v0, 32
-            000000 00000 00000 0000000000001100   => syscall
-            000010 00000100000000000011010010   => j SelectMode
-            001001 00000 01001 0000000000000001 => li $t1, 1
-            000010 00000100000000000011011111   => j BeginGame
-            001001 00000 01001 0000000000000010 => li $t1, 2
-
-            000000 00000 00000 00000 00000 001100 => syscall ====> 269
-            000000 00000 10110 00100 00000 100001 => addu o move
-            000000 00000 10111 00101 00000 100001 => addu o move
-            000011 00000100000000000111100010     => jal
-            000011 00000100000000000110011000     => jal
-            001001 00000 00100 0000000000001101   => addiu o li
-            000000 00000 10100 00101 00000 100001 => addu o move
-            001111 00000 00001 0001000000000001   => lui -------
-            100011 00001 00110 0000000000100000   => lw
-            000000 00000 10000 00111 00000 100001 => addu o move
-            000011 00000100000000000101000111     => jal
-            000000 00000 00101 10100 00000 100001 => addu o move
-            000000 00000 00111 10000 00000 100001 => addu o move
-            001001 00000 00100 0000000000110010   => addiu o li
-            000000 00000 10101 00101 00000 100001 => addu o move
-            001111 00000 00001 0001000000000001   => lui ------
-            100011 00001 00110 0000000000100100   => lw =======> 285
-
-            */
 
             // negative number
             if(isNegative(immediateChar) == 1) {
@@ -970,36 +959,22 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "andi");
 
-            //andi()
+            // negative number
+            if(isNegative(immediateChar) == 1) {
+
+                complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+            }
+
+            andi(rs, rt, immediate);
 
             break;
 
         case 13:
 
             printf("%s\n", "ori");
-
-            /*
-
-                xori $t4, $t4, 0xffffffff
-
-                Type I
-                pc = 592
-                opcode = 001101 => Type I
-                rs = 00001 => $at
-                rt = 00001 => $at
-                immediate = 1111111111111111 => ffff
-                ori =>
-
-                Type R
-                pc = 593
-                opcode = 000000 => Type R
-                rs = 01100 => $t4
-                rt = 00001 => $at
-                rd = 01100 => $t4
-                shamt = 00000 => X
-                funct = 100110 => 26 hex => 38 dec
-
-            */
 
             registers[rt] = immediate;
 
@@ -1009,7 +984,22 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lui");
 
-            // SE IGNORA
+            // must be ignored
+
+            /*
+
+            // negative number
+            if(isNegative(immediateChar) == 1) {
+
+                complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+            }
+
+            lui(rs, rt, immediate);
+
+            */
 
             break;
 
@@ -1083,7 +1073,7 @@ void instructionI(char *instruction) {
 
             }
 
-            //lbu()
+            lbu(rs, rt, immediate);
 
             break;
 
@@ -1100,7 +1090,7 @@ void instructionI(char *instruction) {
 
             }
 
-            //lhu()
+            lhu(rs, rt, immediate);
 
             break;
 
@@ -1108,7 +1098,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "sb");
 
-            //sb()
+            sb(rs, rt, immediate);
 
             break;
 
@@ -1116,25 +1106,13 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "sh");
 
-            //sh()
+            sh(rs, rt, immediate);
 
             break;
 
         case 43:
 
             printf("%s\n", "sw");
-
-            /*
-
-            101011 00001 00000 0000000000000000
-            sw $zero, 0xFFFF0000 => 323
-            NO HACE NACE NADA
-
-            sw $t1, mode
-            101011 00001 01001 0000000000110100
-            sw     $at   $t1   52
-
-            */
 
             // cannot overwrite register $zero
             if(rt != 0) {
@@ -1161,7 +1139,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "ll");
 
-            //ll()
+            ll(rs, rt, immediate);
 
             break;
 
@@ -1169,7 +1147,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "sc");
 
-            //sc()
+            sc(rs, rt, immediate);
 
             break;
 
@@ -1217,16 +1195,6 @@ void instructionJ(char *instruction) {
     }
 
    printf("\n");
-
-}
-
-void printLines(char **lines, int size) {
-
-    for (size_t i = 0; i < size; i++) {
-
-        printf ("line[%3zu] : %s\n", i, lines[i]);
-
-    }
 
 }
 
@@ -1405,24 +1373,11 @@ int main() {
     // creating memory array
     memory = malloc(MEMORY_SIZE * sizeof(int));
 
-<<<<<<< Updated upstream
     // global pointer must be positioned at the start of the memory array
     registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
 
     // stack pointer must be positioned at the end of the memory array
     registers[STACK_POINTER_POSITION] = 1999;
-
-
-
-
-=======
->>>>>>> Stashed changes
-    //printLines(textInstructions, textInstructionsSize);
-
-    //printLines(dataInstructionsAux, dataInstructionsSize);
-
-
-
 
     // text instructions execution
     while(pc < textInstructionsSize) {
@@ -1474,13 +1429,15 @@ int main() {
 
         /*
 
-        if(pc > 593) {
+        if(pc > 665) {
 
             pc = 4444;
 
         }
 
+
         */
+
 
         /*
         int testInteger;
@@ -1520,7 +1477,6 @@ int main() {
     //free(dynamicData);
 
 }
-<<<<<<< Updated upstream
 
 /*
 
@@ -1722,6 +1678,185 @@ int main() {
 
 
 
+    Type I
+    pc = 704
+    opcode = 000100 (4)
+    rs = 01000 (8)
+    rt = 00000 (0)
+    immediate = 1111111111111010 (65530)
+    beq
+
+    immediate = 1111111111111010 (65530)
+                0000000000000101
+                               1
+                0000000000000110
+
+
+
+
+
+
+    Type I
+    pc = 646
+    opcode = 000101 (5)
+    rs = 00001 (1)
+    rt = 01000 (8)
+    immediate = 0000000000001101 (13)
+    bne
+
+
+
+
+
+
+    100011 00001 01001 0000000000000100 => lw $t1, 0xFFFF0004
+    001000 00000 00001 0000000000110001 => addi $at, $zero, 49 => ??????????
+    000100 00001 01001 0000000000000110 => beq $t1, 0x00000031, SetOnePlayerMode
+    001000 00000 00001 0000000000110010 => addi $at, $zero, 50 => ??????????
+    000100 00001 01001 0000000000000110 => beq $t1, 0x00000032, SetTwoPlayerMode
+    001001 00000 00100 0000000011111010 => li $a0, 250
+    001001 00000 00010 0000000000100000 => li $v0, 32
+    000000 00000 00000 0000000000001100   => syscall
+    000010 00000100000000000011010010   => j SelectMode
+    001001 00000 01001 0000000000000001 => li $t1, 1
+    000010 00000100000000000011011111   => j BeginGame
+    001001 00000 01001 0000000000000010 => li $t1, 2
+
+    000000 00000 00000 00000 00000 001100 => syscall ====> 269
+    000000 00000 10110 00100 00000 100001 => addu o move
+    000000 00000 10111 00101 00000 100001 => addu o move
+    000011 00000100000000000111100010     => jal
+    000011 00000100000000000110011000     => jal
+    001001 00000 00100 0000000000001101   => addiu o li
+    000000 00000 10100 00101 00000 100001 => addu o move
+    001111 00000 00001 0001000000000001   => lui -------
+    100011 00001 00110 0000000000100000   => lw
+    000000 00000 10000 00111 00000 100001 => addu o move
+    000011 00000100000000000101000111     => jal
+    000000 00000 00101 10100 00000 100001 => addu o move
+    000000 00000 00111 10000 00000 100001 => addu o move
+    001001 00000 00100 0000000000110010   => addiu o li
+    000000 00000 10101 00101 00000 100001 => addu o move
+    001111 00000 00001 0001000000000001   => lui ------
+    100011 00001 00110 0000000000100100   => lw =======> 285
+
+
+
+
+
+    xori $t4, $t4, 0xffffffff
+
+    Type I
+    pc = 592
+    opcode = 001101 => Type I
+    rs = 00001 => $at
+    rt = 00001 => $at
+    immediate = 1111111111111111 => ffff
+    ori =>
+
+    Type R
+    pc = 593
+    opcode = 000000 => Type R
+    rs = 01100 => $t4
+    rt = 00001 => $at
+    rd = 01100 => $t4
+    shamt = 00000 => X
+    funct = 100110 => 26 hex => 38 dec
+
+
+
+
+
+
+    101011 00001 00000 0000000000000000
+    sw $zero, 0xFFFF0000 => 323
+    NO HACE NACE NADA
+
+    sw $t1, mode
+    101011 00001 01001 0000000000110100
+    sw     $at   $t1   52
+
+
+
+
+
+
+
+
+    xori $t4, $t4, 0xffffffff
+
+    Type I
+    pc = 592
+    opcode = 001101 => Type I
+    rs = 00001 => $at
+    rt = 00001 => $at
+    immediate = 1111111111111111 => ffff
+    ori =>
+
+    Type R
+    pc = 593
+    opcode = 000000 => Type R
+    rs = 01100 => $t4
+    rt = 00001 => $at
+    rd = 01100 => $t4
+    shamt = 00000 => X
+    funct = 100110 => 26 hex => 38 dec
+
+
+
+
+
+
+        rt     rs
+    sw $ra, 0($sp)
+
+    101011 11101 11111 0000000000000000
+    opcode rs    rt    immediate
+
+
+
+
+
+
+
+
+
+
+    xori $t4, $t4, 0xffffffff
+
+    Type I
+    pc = 592
+    opcode = 001101 => Type I
+    rs = 00001 => $at
+    rt = 00001 => $at
+    immediate = 1111111111111111 => ffff
+    ori =>
+
+    Type R
+    pc = 593
+    opcode = 000000 => Type R
+    rs = 01100 => $t4
+    rt = 00001 => $at
+    rd = 01100 => $t4
+    shamt = 00000 => X
+    funct = 100110 => 26 hex => 38 dec
+
+
+
+
+
+
+
+
+
+    lw $ra, 0($sp)
+
+    100011 11101 11111 0000000000000000
+    opcode rs    rt    immediate
+
+
+
+
 
 
 
@@ -1739,5 +1874,3 @@ int main() {
 
 
 */
-=======
->>>>>>> Stashed changes

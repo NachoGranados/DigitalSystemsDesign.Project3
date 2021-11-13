@@ -330,8 +330,6 @@ void beq(int rs, int rt, int SignExtImm) {
 
     if(registers[rs] == registers[rt]) {
 
-        //pc = pc + 1 + SignExtImm;
-
         pc = pc + SignExtImm;
 
     }
@@ -703,7 +701,7 @@ void syscallWait() {
 
    while (clock() < end_time) {
 
-      //blank loop for waiting
+      // blank loop for waiting
 
    }
 
@@ -805,6 +803,8 @@ void instructionR(char *instruction) {
             printf("%s\n", "syscall");
 
             syscallWait();
+
+            //SDL_Delay(250);
 
             break;
 
@@ -951,6 +951,8 @@ void instructionI(char *instruction) {
         case 4:
 
             printf("%s\n", "beq");
+            printf("registers[rs] = %d\n", registers[rs]);
+            printf("registers[rt] = %d\n", registers[rt]);
 
             beq(rs, rt, immediate);
 
@@ -1050,9 +1052,19 @@ void instructionI(char *instruction) {
             if(rs == 1) {
 
                 // key pressed  0xFFFF0004                 0xFFFF0000
-                if(immediate == 4294901764 || immediate == 4294901760) {
+                //if(immediate == 4294901764 || immediate == 4294901760) {
+                if(pc >= 210 && pc <=  2018) {
 
                     // REVISAR SI SE PRESIONA UNA TECLA
+
+
+
+                    printf("%s\n", "ME QUEDO AQIIIIIIIIIIIIIIIIII");
+
+                    // register $t1
+                    registers[9] = 1;
+
+
 
                 // data instruction
                 } else {
@@ -1299,6 +1311,91 @@ void showPixels(SDL_Renderer *renderer, SDL_Rect *pixelArray, int arraySize) {
 
 }
 
+
+
+
+
+
+
+
+
+int checkKeyPressed() {
+
+    int r = 0;
+
+    SDL_Event event;
+
+    while(SDL_PollEvent(&event)) {
+
+        printf("KEY\n");
+
+        if(event.type == SDL_KEYDOWN) {
+
+            switch(event.key.keysym.sym) {
+
+                case SDLK_RETURN:
+
+                   // register $t1
+                   registers[9] = 31;
+
+                   printf("KEY ---------------- ENTER\n");
+
+                   r = 0;
+
+                   break;
+
+
+                /*
+
+                switch (event.key.keysym.sym) {
+
+                    // key 1 pressed
+                    case SDLK_RETURN:
+
+                        // register $t1
+                        registers[9] = 31;
+
+                        printf("KEY ---------------- ENTER\n");
+
+                        break;
+
+                    // key 2 pressed
+                    case SDLK_2:
+
+                        // register $t1
+                        registers[9] = 32;
+
+                        printf("KEY ---------------- 2\n");
+
+                        break;
+
+                }
+
+                */
+
+                }
+
+        }
+
+    }
+
+    return r;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 int main (int argc, char **argv) {
 
     // reading text file
@@ -1489,13 +1586,96 @@ int main (int argc, char **argv) {
                         // text instructions execution
                         while(pc < textInstructionsSize) {
 
+                            // check if a key has been pressed
+                            while(SDL_PollEvent(&event)) {
+
+                                // key 1 pressed
+                                if ((event.key.keysym.sym == SDLK_1) |
+                                    (event.key.keysym.sym == SDLK_KP_1)) {
+
+                                    //printf ("$t1 = %d\n", registers[9]);
+
+                                    //SDL_Delay(500);
+
+                                    //pc = textInstructionsSize;
+
+                                    //initRunning = 0;
+
+                                    // register $at
+                                    registers[1] = 1;
+
+
+                                    //printf ("$t1 = %d\n", registers[9]);
+
+
+
+
+                                    //initRunning = 0;
+
+                                    //pc = 600;
+
+                                    //break;
+
+                                    //pc = 715;
+
+                                    //pc = textInstructionsSize;
+
+                                    //initRunning = 0;
+
+                                    //initRunning = 0;
+
+                                }
+
+                                // key 2 pressed
+                                if ((event.key.keysym.sym == SDLK_2) |
+                                    (event.key.keysym.sym == SDLK_KP_2)) {
+
+                                    // register $at
+                                    registers[1] = 1;
+
+                                    //pc = textInstructionsSize;
+
+                                    //initRunning = 0;
+
+
+
+
+
+                                    //printf ("$t1 = %d\n", registers[9]);
+
+                                    //registers[9] = 50;
+
+                                    //initRunning = 0;
+
+                                    //pc = textInstructionsSize;
+
+                                    //initRunning = 0;
+
+                                }
+
+                            }
+
+
+
+
+                            //pc = checkKeyPressed();
+
+
+
+
+                            //printf ("$t1 = %d\n", registers[9]);
+
                             printf ("pc = %d\n", pc);
 
-                            if(event.type == SDL_QUIT) {
+                            /*
+
+                            if(startEvent.type == SDL_QUIT) {
 
                                 initRunning = 0;
 
                             }
+
+                            */
 
                             char *instruction;
 
@@ -1533,6 +1713,19 @@ int main (int argc, char **argv) {
 
                                 }
 
+                                /*
+
+                                // QUITAR
+                                if(pc > 350) {
+
+                                    pc = 5000;
+
+                                    initRunning = 0;
+
+                                }
+
+                                */
+
 
                                 //pc--;
 
@@ -1552,6 +1745,20 @@ int main (int argc, char **argv) {
 
                             pc++;
 
+                            //printf("\e[1;1H\e[2J");
+
+
+
+
+                            //SDL_Delay(50);
+
+
+
+
+
+
+
+
 
 
                             /*
@@ -1564,20 +1771,22 @@ int main (int argc, char **argv) {
 
                             */
 
-
-
-
-
-
+                            /*
 
                             char flag;
                             printf("Continue:");
                             scanf("%c", &flag);
                             printf("\n");
 
+                            */
+
+
+
 
 
                         }
+
+
 
 
 
@@ -1617,17 +1826,11 @@ int main (int argc, char **argv) {
         // Clear window
         SDL_RenderClear(renderer);
 
-
-
         // Light blue color
         SDL_SetRenderDrawColor(renderer, 0, 102, 204, 0);
 
         // Draw rectangles
         showPixels(renderer, pixelArray, PIXEL_ARRAY_SIZE);
-
-
-
-
 
         // Show what was drawn
         SDL_RenderPresent(renderer);

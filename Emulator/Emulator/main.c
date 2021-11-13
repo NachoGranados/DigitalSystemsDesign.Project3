@@ -29,6 +29,7 @@ const int IMMEDIATE_LENGHT = 16;
 
 // Instruction J constant
 const int ADDRESS_LENGHT = 26;
+const int ADDRESS_LENGHT_ADJUSTMENT = 6;
 
 // Color constant
 const int MAX_IMMEDIATE_VALUE = 65535;
@@ -53,6 +54,10 @@ int pc = 0;
 int *dataInstructions;
 
 int *memory;
+
+SDL_Renderer *renderer;
+
+SDL_Rect *pixelArray;
 
 /*
 registers[0]     -> $zero   -> The Constant Value 0
@@ -349,7 +354,7 @@ void j(int JumpAddr) {
 
 void jal(int JumpAddr) {
 
-    registers[31] = pc + 2;
+    //registers[31] = pc + 2;
 
     pc = JumpAddr;
 
@@ -597,7 +602,9 @@ void sltu(int rs, int rt, int rd) {
 
 void sll(int rt, int rd, int shamt) {
 
-    int aux = registers[rt] * (2 * shamt);
+    //int aux = registers[rt] * (2 * shamt);
+
+    int aux = registers[rt] * pow(2, shamt);
 
     registers[rd] = aux;
 
@@ -605,7 +612,9 @@ void sll(int rt, int rd, int shamt) {
 
 void srl(int rt, int rd, int shamt) {
 
-    int aux = registers[rt] / (2 * shamt);
+    //int aux = registers[rt] / (2 * shamt);
+
+    int aux = registers[rt] / pow(2, shamt);
 
     registers[rd] = aux;
 
@@ -698,6 +707,35 @@ void syscallWait() {
 
 }
 
+void drawPoint(SDL_Renderer *renderer, SDL_Rect *pixelArray, int x, int y) {
+
+    //printf("ESTOY EN DRAWPOINT");
+
+    int ptr = 0;
+
+    for(int i = 0; i < PIXEL_ARRAY_ROW_SIZE; i++) {
+
+        for(int j = 0; j < PIXEL_ARRAY_COLUMN_SIZE; j++) {
+
+            if(i == x && j == y) {
+
+                SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+
+                SDL_RenderFillRect(renderer, &pixelArray[ptr]);
+
+                // Show what was drawn
+                SDL_RenderPresent(renderer);
+
+            }
+
+            ptr++;
+
+        }
+
+    }
+
+}
+
 void instructionR(char *instruction) {
 
     char opcodeChar[OPCODE_LENGHT];
@@ -741,7 +779,8 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "sll");
 
-            sll(rt, rd, shamt);
+            // must be ignored
+            //sll(rt, rd, shamt);
 
             break;
 
@@ -781,7 +820,17 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "addu o move");
 
-            addu(rs, rt, rd);
+            if(rt == 28) {
+
+                printf("%s\n", "ESTOY EN DRAWPOINT");
+
+                drawPoint(renderer, pixelArray, registers[4], registers[5]);
+
+            } else {
+
+                addu(rs, rt, rd);
+
+            }
 
             break;
 
@@ -1014,10 +1063,6 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lui");
 
-            // must be ignored
-
-            /*
-
             // negative number
             if(isNegative(immediateChar) == 1) {
 
@@ -1027,8 +1072,9 @@ void instructionI(char *instruction) {
 
             }
 
+            /*
+            must be ignored
             lui(rs, rt, immediate);
-
             */
 
             break;
@@ -1199,7 +1245,7 @@ void instructionJ(char *instruction) {
     sliceInstruction(instruction, addressChar, 12, 32);
 
     opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
-    address = binaryToDecimal(addressChar, ADDRESS_LENGHT);
+    address = binaryToDecimal(addressChar, ADDRESS_LENGHT - ADDRESS_LENGHT_ADJUSTMENT);
 
     printf ("opcode = %s (%d)\n", opcodeChar, opcode);
     printf ("address = %s (%d)\n", addressChar, address);
@@ -1210,7 +1256,7 @@ void instructionJ(char *instruction) {
 
         printf("%s\n", "j");
 
-        //j(address);
+        j(address);
 
         break;
 
@@ -1218,7 +1264,7 @@ void instructionJ(char *instruction) {
 
         printf("%s\n", "jal");
 
-        //jal(address);
+        jal(address);
 
         break;
 
@@ -1294,91 +1340,14 @@ void showPixels(SDL_Renderer *renderer, SDL_Rect *pixelArray, int arraySize) {
 
 int main (int argc, char **argv) {
 
-    // Window creation
-    SDL_Init(SDL_INIT_VIDEO);
-
-	SDL_Window *window = SDL_CreateWindow("MARS MIPS EMULATOR", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-
-	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-    SDL_Rect *pixelArray;
-    pixelArray = (SDL_Rect*)malloc(PIXEL_ARRAY_SIZE * sizeof(SDL_Rect));
-
-    createPixels(pixelArray, PIXEL_ARRAY_ROW_SIZE, PIXEL_ARRAY_COLUMN_SIZE);
-
-    int running = 1;
-
-    SDL_Event event;
-
-    // Infinite loop
-    while(running) {
-
-        while(SDL_PollEvent(&event)) {
-
-            if(event.type == SDL_QUIT) {
-
-                running = 0;
-
-            }
-
-        }
-
-        // black background
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-
-        // Clear window
-        SDL_RenderClear(renderer);
-
-
-
-        // Light blue color
-        SDL_SetRenderDrawColor(renderer, 0, 102, 204, 0);
-
-        // Draw rectangles
-        showPixels(renderer, pixelArray, PIXEL_ARRAY_SIZE);
-
-
-
-
-
-        // Show what was drawn
-        SDL_RenderPresent(renderer);
-
-    }
-
-    // Free memory
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
-
-    //return 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    char buffer[MAX_CHARACTERS];
-
     // reading text file
     char **textInstructions;
 
     int nptrs = NUMBER_POINTERS;
 
     int textInstructionsSize = 0;
+
+    char buffer[MAX_CHARACTERS];
 
     char *file = "pongText.txt";
 
@@ -1516,10 +1485,391 @@ int main (int argc, char **argv) {
     memory = malloc(MEMORY_SIZE * sizeof(int));
 
     // global pointer must be positioned at the start of the memory array
+    //registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
+
+    // stack pointer must be positioned at the end of the memory array
+    registers[STACK_POINTER_POSITION] = 1999;
+
+    // Window creation
+    SDL_Init(SDL_INIT_VIDEO);
+
+	SDL_Window *window = SDL_CreateWindow("MARS MIPS EMULATOR", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+
+	//SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    //SDL_Rect *pixelArray;
+    pixelArray = (SDL_Rect*)malloc(PIXEL_ARRAY_SIZE * sizeof(SDL_Rect));
+
+    createPixels(pixelArray, PIXEL_ARRAY_ROW_SIZE, PIXEL_ARRAY_COLUMN_SIZE);
+
+    int initRunning = 1;
+
+    SDL_Event event;
+
+    // Infinite loop
+    while(initRunning) {
+
+        while(SDL_PollEvent(&event)) {
+
+            switch(event.type) {
+
+                case SDL_QUIT:
+
+                    initRunning = 0;
+
+                    break;
+
+                case SDL_KEYDOWN:
+
+                    // Start game
+                    if (event.key.keysym.sym == SDLK_RETURN) {
+
+                        // text instructions execution
+                        while(pc < textInstructionsSize) {
+
+                            printf ("pc = %d\n", pc);
+
+                            if(event.type == SDL_QUIT) {
+
+                                initRunning = 0;
+
+                            }
+
+                            char *instruction;
+
+                            instruction = textInstructions[pc];
+
+                            char opcode[OPCODE_LENGHT];
+
+                            // getting opcode from instruction
+                            for(int i = 0; i < OPCODE_LENGHT; i++) {
+
+                                opcode[i] = instruction[i];
+
+                            }
+
+                            // R instruction
+                            if(strcmp(opcode, "000000") == 0) {
+
+                                printf ("Type R\n");
+                                //printf ("pc = %d\n", pc);
+
+                                instructionR(instruction);
+
+                            // J instruction
+                            } else if(strcmp(opcode, "000010") == 0 || strcmp(opcode, "000011") == 0) {
+
+                                printf ("Type J\n");
+                                //printf ("pc = %d\n", pc);
+
+
+
+                                // QUITAR
+                                if(pc > 1) {
+
+                                    instructionJ(instruction);
+
+                                    pc--;
+
+                                }
+
+
+                                //pc--;
+
+                                //instructionJ(instruction);
+
+                            // I instruction
+                            } else {
+
+                                printf ("Type I\n");
+                                //printf ("pc = %d\n", pc);
+
+                                instructionI(instruction);
+
+                            }
+
+                            // reset $zero
+                            registers[0] = 0;
+
+                            pc++;
+
+
+
+                            /*
+
+                            if(pc > 1) {
+
+                                pc = 4444;
+
+                            }
+
+                            */
+
+
+
+
+
+                            char flag;
+                            printf("Continue:");
+                            scanf("%c", &flag);
+                            printf("\n");
+
+                        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    }
+
+                    break;
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+
+        // black background
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
+        // Clear window
+        SDL_RenderClear(renderer);
+
+
+
+        // Light blue color
+        SDL_SetRenderDrawColor(renderer, 0, 102, 204, 0);
+
+        // Draw rectangles
+        showPixels(renderer, pixelArray, PIXEL_ARRAY_SIZE);
+
+
+
+
+
+        // Show what was drawn
+        SDL_RenderPresent(renderer);
+
+    }
+
+    // Free memory
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    return 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+
+
+    // reading text file
+    char **textInstructions;
+
+    int nptrs = NUMBER_POINTERS;
+
+    int textInstructionsSize = 0;
+
+    char buffer[MAX_CHARACTERS];
+
+    char *file = "pongText.txt";
+
+    FILE *fp = fopen(file, "r");
+
+    if(!fp) {
+
+        perror("text file open failed");
+
+        return 1;
+
+    } else if((textInstructions = malloc(nptrs * sizeof *textInstructions)) == NULL) {
+
+        perror("malloc error");
+
+        exit (EXIT_FAILURE);
+
+    }
+
+    while(fgets(buffer, MAX_CHARACTERS, fp)) {
+
+        int size;
+
+        buffer[(size = strcspn (buffer, "\n"))] = 0;
+
+        if(textInstructionsSize == nptrs) {
+
+            void *tmp = realloc(textInstructions, (2 * nptrs) * sizeof *textInstructions);
+
+            if(!tmp) {
+
+                perror ("realloc error");
+
+                break;
+            }
+
+            textInstructions = tmp;
+
+            nptrs *= 2;
+        }
+
+        if(!(textInstructions[textInstructionsSize] = malloc(size + 1))) {
+
+            perror ("malloc error");
+
+            break;
+        }
+
+        memcpy(textInstructions[textInstructionsSize], buffer, size + 1);
+
+        textInstructionsSize += 1;
+
+    }
+
+    if(fp != stdin) {
+
+        fclose (fp);
+
+    }
+
+
+    // -------------------------------------------------------------------------
+
+    // reading data file
+    char **dataInstructionsAux;
+
+    nptrs = NUMBER_POINTERS;
+
+    int dataInstructionsSize = 0;
+
+    file = "pongData.txt";
+
+    fp = fopen(file, "r");
+
+    if(!fp) {
+
+        perror("data file open failed");
+
+        return 1;
+
+    } else if((dataInstructionsAux = malloc(nptrs * sizeof *dataInstructionsAux)) == NULL) {
+
+        perror("malloc error");
+
+        exit(EXIT_FAILURE);
+
+    }
+
+    while(fgets(buffer, MAX_CHARACTERS, fp)) {
+
+        int size;
+
+        buffer[(size = strcspn (buffer, "\n"))] = 0;
+
+        if(dataInstructionsSize == nptrs) {
+
+            void *tmp = realloc(dataInstructionsAux, (2 * nptrs) * sizeof *dataInstructionsAux);
+
+            if(!tmp) {
+
+                perror ("realloc error");
+
+                break;
+
+            }
+
+            dataInstructionsAux = tmp;
+
+            nptrs *= 2;
+
+        }
+
+        if(!(dataInstructionsAux[dataInstructionsSize] = malloc(size + 1))) {
+
+            perror ("malloc error");
+
+            break;
+
+        }
+
+        memcpy(dataInstructionsAux[dataInstructionsSize], buffer, size + 1);
+
+        dataInstructionsSize += 1;
+
+    }
+
+    if(fp != stdin) {
+
+        fclose (fp);
+
+    }
+
+    dataInstructions = malloc(dataInstructionsSize);
+
+    convertDataInstructions(dataInstructionsAux, dataInstructionsSize);
+
+
+
+
+
+
+
+
+
+    // -------------------------------------------------------------------
+
+
+
+    // creating memory array
+    memory = malloc(MEMORY_SIZE * sizeof(int));
+
+    // global pointer must be positioned at the start of the memory array
     registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
 
     // stack pointer must be positioned at the end of the memory array
     registers[STACK_POINTER_POSITION] = 1999;
+
+
+
+
+
+
+    // ------------------------------------------------------------------
 
     // text instructions execution
     while(pc < textInstructionsSize) {
@@ -1569,7 +1919,7 @@ int main (int argc, char **argv) {
         pc++;
 
 
-        /*
+
 
         if(pc > 1) {
 
@@ -1578,19 +1928,18 @@ int main (int argc, char **argv) {
         }
 
 
-        */
 
 
-        /*
+
         int testInteger;
-        printf("Continue:");
+        //printf("Continue:");
         scanf("%d", &testInteger);
         printf("\n");
-        */
+
 
     }
 
-    /*
+
     // free memory
     for (size_t i = 0; i < textInstructionsSize; i++) {
 

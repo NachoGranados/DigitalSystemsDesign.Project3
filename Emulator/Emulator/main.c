@@ -59,6 +59,8 @@ SDL_Renderer *renderer;
 
 SDL_Rect *pixelArray;
 
+int keyPressed;
+
 /*
 registers[0]     -> $zero   -> The Constant Value 0
 registers[1]     -> $at     -> Assembler Temporary
@@ -954,7 +956,27 @@ void instructionI(char *instruction) {
             printf("registers[rs] = %d\n", registers[rs]);
             printf("registers[rt] = %d\n", registers[rt]);
 
-            beq(rs, rt, immediate);
+            if((keyPressed == 1) & ((pc >= 210) & (pc < 2014))) {
+
+                registers[9] = 49;
+
+                beq(rs, rt, immediate);
+
+                keyPressed = 0;
+
+            } if((keyPressed == 1) & ((pc >= 214) & (pc < 218))) {
+
+                registers[9] = 50;
+
+                beq(rs, rt, immediate);
+
+                keyPressed = 0;
+
+            } else {
+
+                beq(rs, rt, immediate);
+
+            }
 
             break;
 
@@ -1052,19 +1074,9 @@ void instructionI(char *instruction) {
             if(rs == 1) {
 
                 // key pressed  0xFFFF0004                 0xFFFF0000
-                //if(immediate == 4294901764 || immediate == 4294901760) {
-                if(pc >= 210 && pc <=  2018) {
+                if(immediate == 4294901764 || immediate == 4294901760) {
 
                     // REVISAR SI SE PRESIONA UNA TECLA
-
-
-
-                    printf("%s\n", "ME QUEDO AQIIIIIIIIIIIIIIIIII");
-
-                    // register $t1
-                    registers[9] = 1;
-
-
 
                 // data instruction
                 } else {
@@ -1548,6 +1560,8 @@ int main (int argc, char **argv) {
     // stack pointer must be positioned at the end of the memory array
     registers[STACK_POINTER_POSITION] = 2000;
 
+    keyPressed = 0;
+
     // Window creation
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -1593,36 +1607,7 @@ int main (int argc, char **argv) {
                                 if ((event.key.keysym.sym == SDLK_1) |
                                     (event.key.keysym.sym == SDLK_KP_1)) {
 
-                                    //printf ("$t1 = %d\n", registers[9]);
-
-                                    //SDL_Delay(500);
-
-                                    //pc = textInstructionsSize;
-
-                                    //initRunning = 0;
-
-                                    // register $at
-                                    registers[1] = 1;
-
-
-                                    //printf ("$t1 = %d\n", registers[9]);
-
-
-
-
-                                    //initRunning = 0;
-
-                                    //pc = 600;
-
-                                    //break;
-
-                                    //pc = 715;
-
-                                    //pc = textInstructionsSize;
-
-                                    //initRunning = 0;
-
-                                    //initRunning = 0;
+                                    keyPressed = 1;
 
                                 }
 
@@ -1630,26 +1615,7 @@ int main (int argc, char **argv) {
                                 if ((event.key.keysym.sym == SDLK_2) |
                                     (event.key.keysym.sym == SDLK_KP_2)) {
 
-                                    // register $at
-                                    registers[1] = 1;
-
-                                    //pc = textInstructionsSize;
-
-                                    //initRunning = 0;
-
-
-
-
-
-                                    //printf ("$t1 = %d\n", registers[9]);
-
-                                    //registers[9] = 50;
-
-                                    //initRunning = 0;
-
-                                    //pc = textInstructionsSize;
-
-                                    //initRunning = 0;
+                                    keyPressed = 1;
 
                                 }
 

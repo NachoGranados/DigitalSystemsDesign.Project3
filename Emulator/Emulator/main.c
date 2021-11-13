@@ -356,6 +356,8 @@ void jal(int JumpAddr) {
 
     //registers[31] = pc + 2;
 
+    registers[31] = pc;
+
     pc = JumpAddr;
 
 }
@@ -642,7 +644,7 @@ void sw(int rs, int rt, int SignExtImm) {
 
     int sp = registers[STACK_POINTER_POSITION];
 
-    int aux = sp + SignExtImm / 4;
+    int aux = sp + (SignExtImm / 4);
 
     memory[aux] = registers[rt];
 
@@ -708,8 +710,6 @@ void syscallWait() {
 }
 
 void drawPoint(SDL_Renderer *renderer, SDL_Rect *pixelArray, int x, int y) {
-
-    //printf("ESTOY EN DRAWPOINT");
 
     int ptr = 0;
 
@@ -796,7 +796,7 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "jr");
 
-            //jr(rs);
+            jr(rs);
 
             break;
 
@@ -925,7 +925,20 @@ void instructionI(char *instruction) {
     opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
     rs = binaryToDecimal(rsChar, RS_LENGHT);
     rt = binaryToDecimal(rtChar, RT_LENGHT);
-    immediate = binaryToDecimal(immediateChar, IMMEDIATE_LENGHT);
+    //immediate = binaryToDecimal(immediateChar, IMMEDIATE_LENGHT);
+
+    // negative number
+    if(isNegative(immediateChar) == 1) {
+
+        complement2(immediateChar, IMMEDIATE_LENGHT);
+
+        immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+    } else {
+
+        immediate = binaryToDecimal(immediateChar, IMMEDIATE_LENGHT);
+
+    }
 
     printf ("opcode = %s (%d)\n", opcodeChar, opcode);
     printf ("rs = %s (%d)\n", rsChar, rs);
@@ -938,6 +951,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "beq");
 
+            /*
             // negative number
             if(isNegative(immediateChar) == 1) {
 
@@ -946,6 +960,7 @@ void instructionI(char *instruction) {
                 immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
 
             }
+            */
 
             //beq(rs, rt, immediate);
 
@@ -955,6 +970,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "bne");
 
+            /*
             // negative number
             if(isNegative(immediateChar) == 1) {
 
@@ -963,6 +979,7 @@ void instructionI(char *instruction) {
                 immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
 
             }
+            */
 
             //bne(rs, rt, immediate);
 
@@ -972,6 +989,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "addi");
 
+            /*
             // negative number
             if(isNegative(immediateChar) == 1) {
 
@@ -980,6 +998,7 @@ void instructionI(char *instruction) {
                 immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
 
             }
+            */
 
             // reserve or free space in the stack
             if(rs == STACK_POINTER_POSITION && rt == STACK_POINTER_POSITION) {
@@ -996,6 +1015,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "addiu o li");
 
+            /*
             // negative number
             if(isNegative(immediateChar) == 1) {
 
@@ -1004,6 +1024,7 @@ void instructionI(char *instruction) {
                 immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
 
             }
+            */
 
             addiu(rs, rt, immediate);
 
@@ -1021,6 +1042,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "sltiu");
 
+            /*
             // negative number
             if(isNegative(immediateChar) == 1) {
 
@@ -1029,6 +1051,7 @@ void instructionI(char *instruction) {
                 immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
 
             }
+            */
 
             sltiu(rs, rt, immediate);
 
@@ -1038,6 +1061,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "andi");
 
+            /*
             // negative number
             if(isNegative(immediateChar) == 1) {
 
@@ -1046,6 +1070,7 @@ void instructionI(char *instruction) {
                 immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
 
             }
+            */
 
             andi(rs, rt, immediate);
 
@@ -1063,6 +1088,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lui");
 
+            /*
             // negative number
             if(isNegative(immediateChar) == 1) {
 
@@ -1071,6 +1097,7 @@ void instructionI(char *instruction) {
                 immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
 
             }
+            */
 
             /*
             must be ignored
@@ -1094,6 +1121,7 @@ void instructionI(char *instruction) {
                 // data instruction
                 } else {
 
+                    /*
                     // negative number
                     if(isNegative(immediateChar) == 1) {
 
@@ -1102,6 +1130,7 @@ void instructionI(char *instruction) {
                         immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
 
                     }
+                    */
 
                     immediate /= 4;
 
@@ -1140,6 +1169,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lbu");
 
+            /*
             // negative number
             if(isNegative(immediateChar) == 1) {
 
@@ -1148,6 +1178,7 @@ void instructionI(char *instruction) {
                 immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
 
             }
+            */
 
             lbu(rs, rt, immediate);
 
@@ -1157,6 +1188,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lhu");
 
+            /*
             // negative number
             if(isNegative(immediateChar) == 1) {
 
@@ -1165,6 +1197,7 @@ void instructionI(char *instruction) {
                 immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
 
             }
+            */
 
             lhu(rs, rt, immediate);
 
@@ -1488,7 +1521,8 @@ int main (int argc, char **argv) {
     //registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
 
     // stack pointer must be positioned at the end of the memory array
-    registers[STACK_POINTER_POSITION] = 1999;
+    //registers[STACK_POINTER_POSITION] = 1999; -> 1998
+    registers[STACK_POINTER_POSITION] = 2000;
 
     // Window creation
     SDL_Init(SDL_INIT_VIDEO);

@@ -1,8 +1,11 @@
+// Libraries
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include <time.h>
+
+#include <SDL2/SDL.h>
 
 // Read file constants
 const int MAX_CHARACTERS = 34;
@@ -34,6 +37,15 @@ const int MAX_IMMEDIATE_VALUE = 65535;
 const int MEMORY_SIZE = 2000;
 const int DYNAMIC_DATA_POINTER_POSITION = 28;
 const int STACK_POINTER_POSITION = 29;
+
+// Window constants
+const int SCREEN_WIDTH = 512;
+const int SCREEN_HEIGHT = 256;
+
+// Rectangle array constant
+const int PIXEL_ARRAY_SIZE = 2048;
+const int PIXEL_ARRAY_ROW_SIZE = 32;
+const int PIXEL_ARRAY_COLUMN_SIZE = 64;
 
 // Global variables
 int pc = 0;
@@ -1245,7 +1257,119 @@ void convertDataInstructions(char **instructions, int lenght) {
 
 }
 
-int main() {
+void createPixels(SDL_Rect *pixelArray, int rows, int columns) {
+
+    int ptr = 0;
+
+    for(int i = 0; i < rows; i++) {
+
+        for(int j = 0; j < columns; j++) {
+
+            SDL_Rect rectangle;
+
+            rectangle.x = 0 + (j * 8);
+            rectangle.y = 0 + (i * 8);
+            rectangle.w = 8;
+            rectangle.h = 8;
+
+            pixelArray[ptr] = rectangle;
+
+            ptr++;
+
+        }
+
+    }
+
+}
+
+void showPixels(SDL_Renderer *renderer, SDL_Rect *pixelArray, int arraySize) {
+
+    for (int i = 0; i < arraySize; i++) {
+
+        SDL_RenderFillRect(renderer, &pixelArray[i]);
+
+    }
+
+}
+
+int main (int argc, char **argv) {
+
+    // Window creation
+    SDL_Init(SDL_INIT_VIDEO);
+
+	SDL_Window *window = SDL_CreateWindow("MARS MIPS EMULATOR", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+
+	SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+    SDL_Rect *pixelArray;
+    pixelArray = (SDL_Rect*)malloc(PIXEL_ARRAY_SIZE * sizeof(SDL_Rect));
+
+    createPixels(pixelArray, PIXEL_ARRAY_ROW_SIZE, PIXEL_ARRAY_COLUMN_SIZE);
+
+    int running = 1;
+
+    SDL_Event event;
+
+    // Infinite loop
+    while(running) {
+
+        while(SDL_PollEvent(&event)) {
+
+            if(event.type == SDL_QUIT) {
+
+                running = 0;
+
+            }
+
+        }
+
+        // black background
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+
+        // Clear window
+        SDL_RenderClear(renderer);
+
+
+
+        // Light blue color
+        SDL_SetRenderDrawColor(renderer, 0, 102, 204, 0);
+
+        // Draw rectangles
+        showPixels(renderer, pixelArray, PIXEL_ARRAY_SIZE);
+
+
+
+
+
+        // Show what was drawn
+        SDL_RenderPresent(renderer);
+
+    }
+
+    // Free memory
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+
+    //return 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     char buffer[MAX_CHARACTERS];
 
@@ -1466,12 +1590,14 @@ int main() {
 
     }
 
+    /*
     // free memory
     for (size_t i = 0; i < textInstructionsSize; i++) {
 
         free(textInstructions[i]);
 
     }
+    */
 
     free(textInstructions);
 
@@ -1493,6 +1619,26 @@ int main() {
     //free(stack);
 
     //free(dynamicData);
+
+    return 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
 

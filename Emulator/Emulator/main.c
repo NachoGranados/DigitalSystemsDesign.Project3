@@ -330,7 +330,9 @@ void beq(int rs, int rt, int SignExtImm) {
 
     if(registers[rs] == registers[rt]) {
 
-        pc = pc + 1 + SignExtImm;
+        //pc = pc + 1 + SignExtImm;
+
+        pc = pc + SignExtImm;
 
     }
 
@@ -353,8 +355,6 @@ void j(int JumpAddr) {
 }
 
 void jal(int JumpAddr) {
-
-    //registers[31] = pc + 2;
 
     registers[31] = pc;
 
@@ -822,9 +822,11 @@ void instructionR(char *instruction) {
 
             if(rt == 28) {
 
-                printf("%s\n", "ESTOY EN DRAWPOINT");
+                printf("%s\n", "DRAWPOINT");
+                printf("x = %d\n", registers[5]);
+                printf("y = %d\n", registers[4]);
 
-                drawPoint(renderer, pixelArray, registers[4], registers[5]);
+                drawPoint(renderer, pixelArray, registers[5], registers[4]);
 
             } else {
 
@@ -925,7 +927,6 @@ void instructionI(char *instruction) {
     opcode = binaryToDecimal(opcodeChar, OPCODE_LENGHT);
     rs = binaryToDecimal(rsChar, RS_LENGHT);
     rt = binaryToDecimal(rtChar, RT_LENGHT);
-    //immediate = binaryToDecimal(immediateChar, IMMEDIATE_LENGHT);
 
     // negative number
     if(isNegative(immediateChar) == 1) {
@@ -951,35 +952,13 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "beq");
 
-            /*
-            // negative number
-            if(isNegative(immediateChar) == 1) {
-
-                complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-            }
-            */
-
-            //beq(rs, rt, immediate);
+            beq(rs, rt, immediate);
 
             break;
 
         case 5:
 
             printf("%s\n", "bne");
-
-            /*
-            // negative number
-            if(isNegative(immediateChar) == 1) {
-
-                complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-            }
-            */
 
             //bne(rs, rt, immediate);
 
@@ -989,17 +968,6 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "addi");
 
-            /*
-            // negative number
-            if(isNegative(immediateChar) == 1) {
-
-                complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-            }
-            */
-
             // reserve or free space in the stack
             if(rs == STACK_POINTER_POSITION && rt == STACK_POINTER_POSITION) {
 
@@ -1007,24 +975,25 @@ void instructionI(char *instruction) {
 
             }
 
+
+            // QUITAR
+            printf ("registers[rt] = %d\n", registers[rt]);
+
+
             addi(rs, rt, immediate);
+
+
+            // QUITAR
+            printf ("registers[rt] = %d\n", registers[rt]);
+
+
+
 
             break;
 
         case 9:
 
             printf("%s\n", "addiu o li");
-
-            /*
-            // negative number
-            if(isNegative(immediateChar) == 1) {
-
-                complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-            }
-            */
 
             addiu(rs, rt, immediate);
 
@@ -1042,17 +1011,6 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "sltiu");
 
-            /*
-            // negative number
-            if(isNegative(immediateChar) == 1) {
-
-                complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-            }
-            */
-
             sltiu(rs, rt, immediate);
 
             break;
@@ -1060,17 +1018,6 @@ void instructionI(char *instruction) {
         case 12:
 
             printf("%s\n", "andi");
-
-            /*
-            // negative number
-            if(isNegative(immediateChar) == 1) {
-
-                complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-            }
-            */
 
             andi(rs, rt, immediate);
 
@@ -1087,17 +1034,6 @@ void instructionI(char *instruction) {
         case 15:
 
             printf("%s\n", "lui");
-
-            /*
-            // negative number
-            if(isNegative(immediateChar) == 1) {
-
-                complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-            }
-            */
 
             /*
             must be ignored
@@ -1120,17 +1056,6 @@ void instructionI(char *instruction) {
 
                 // data instruction
                 } else {
-
-                    /*
-                    // negative number
-                    if(isNegative(immediateChar) == 1) {
-
-                        complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                        immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-                    }
-                    */
 
                     immediate /= 4;
 
@@ -1159,7 +1084,15 @@ void instructionI(char *instruction) {
             // stack use
             } else if(rs == 29) {
 
+                // QUITAR
+                printf ("memory[rs] = %d\n", memory[rs]);
+                printf ("registers[rt] = %d\n", registers[rt]);
+
                 lw(rs, rt, immediate);
+
+                // QUITAR
+                printf ("memory[rs] = %d\n", memory[rs]);
+                printf ("registers[rt] = %d\n", registers[rt]);
 
             }
 
@@ -1169,17 +1102,6 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lbu");
 
-            /*
-            // negative number
-            if(isNegative(immediateChar) == 1) {
-
-                complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-            }
-            */
-
             lbu(rs, rt, immediate);
 
             break;
@@ -1187,17 +1109,6 @@ void instructionI(char *instruction) {
         case 37:
 
             printf("%s\n", "lhu");
-
-            /*
-            // negative number
-            if(isNegative(immediateChar) == 1) {
-
-                complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-            }
-            */
 
             lhu(rs, rt, immediate);
 
@@ -1233,10 +1144,21 @@ void instructionI(char *instruction) {
 
                     dataInstructions[immediate] = registers[rt];
 
+                // $v0 as destiny register
+                } else if(rs == 2) {
+
+                    move(rt, rs);
+
                 // stack use
                 } else {
 
+                    // QUITAR
+                    printf ("memory[registers[rs]] = %d\n", memory[registers[rs]]);
+
                     sw(rs, rt, immediate);
+
+                    // QUITAR
+                    printf ("memory[registers[rs]] = %d\n", memory[registers[rs]]);
 
                 }
 
@@ -1297,7 +1219,13 @@ void instructionJ(char *instruction) {
 
         printf("%s\n", "jal");
 
+        // QUITAR
+        printf ("registers[31] = %d\n", registers[31]);
+
         jal(address);
+
+        // QUITAR
+        printf ("registers[31] = %d\n", registers[31]);
 
         break;
 
@@ -1521,7 +1449,6 @@ int main (int argc, char **argv) {
     //registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
 
     // stack pointer must be positioned at the end of the memory array
-    //registers[STACK_POINTER_POSITION] = 1999; -> 1998
     registers[STACK_POINTER_POSITION] = 2000;
 
     // Window creation
@@ -1587,7 +1514,6 @@ int main (int argc, char **argv) {
                             if(strcmp(opcode, "000000") == 0) {
 
                                 printf ("Type R\n");
-                                //printf ("pc = %d\n", pc);
 
                                 instructionR(instruction);
 
@@ -1595,7 +1521,6 @@ int main (int argc, char **argv) {
                             } else if(strcmp(opcode, "000010") == 0 || strcmp(opcode, "000011") == 0) {
 
                                 printf ("Type J\n");
-                                //printf ("pc = %d\n", pc);
 
 
 
@@ -1617,7 +1542,6 @@ int main (int argc, char **argv) {
                             } else {
 
                                 printf ("Type I\n");
-                                //printf ("pc = %d\n", pc);
 
                                 instructionI(instruction);
 
@@ -1632,7 +1556,7 @@ int main (int argc, char **argv) {
 
                             /*
 
-                            if(pc > 1) {
+                            if(pc > 300) {
 
                                 pc = 4444;
 
@@ -1644,10 +1568,14 @@ int main (int argc, char **argv) {
 
 
 
+
+
                             char flag;
                             printf("Continue:");
                             scanf("%c", &flag);
                             printf("\n");
+
+
 
                         }
 

@@ -714,28 +714,6 @@ void xori(int rs, int rt, int SignExtImm) {
 
 }
 
-void syscallWait() {
-
-   // register $a0
-   int miliseconds = registers[4];
-
-   clock_t end_time;
-
-   end_time = clock() + miliseconds * CLOCKS_PER_SEC / 1000;
-
-   while (clock() < end_time) {
-
-      // blank loop for waiting
-
-   }
-
-}
-
-
-
-
-
-
 void getRGB(int *rgbArray, int colorDecimal) {
 
     int b = colorDecimal / 65536;
@@ -1307,11 +1285,6 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "syscall");
 
-            //syscallWait();
-
-            // register $a0
-            //int miliseconds = registers[4];
-
             // register $a0
             SDL_Delay(registers[4]);
 
@@ -1517,7 +1490,7 @@ void instructionI(char *instruction) {
     printf ("rt = %s (%d) (%s)\n", rtChar, rt, registerChar);
     printf ("immediate = %s (%d)\n", immediateChar, immediate);
 
-    switch(opcode){
+    switch(opcode) {
 
         case 4:
 
@@ -1660,7 +1633,7 @@ void instructionI(char *instruction) {
                 // key pressed  0xFFFF0004                 0xFFFF0000
                 if(immediate == 4294901764 || immediate == 4294901760) {
 
-                    // REVISAR SI SE PRESIONA UNA TECLA
+                    // CHECK IF A KEY HAS BEEN PRESSED
 
                 // data instruction
                 } else {
@@ -1669,7 +1642,7 @@ void instructionI(char *instruction) {
 
                     li(rt, dataInstructions[immediate]);
 
-                    printf("dataInstruction[immediate] = %d\n", dataInstructions[immediate]);
+                    //printf("dataInstruction[immediate] = %d\n", dataInstructions[immediate]);
 
                     /*
 
@@ -1909,91 +1882,6 @@ void showPixels(SDL_Renderer *renderer, SDL_Rect *pixelArray, int arraySize) {
 
 }
 
-
-
-
-
-
-
-
-
-int checkKeyPressed() {
-
-    int r = 0;
-
-    SDL_Event event;
-
-    while(SDL_PollEvent(&event)) {
-
-        printf("KEY\n");
-
-        if(event.type == SDL_KEYDOWN) {
-
-            switch(event.key.keysym.sym) {
-
-                case SDLK_RETURN:
-
-                   // register $t1
-                   registers[9] = 31;
-
-                   printf("KEY ---------------- ENTER\n");
-
-                   r = 0;
-
-                   break;
-
-
-                /*
-
-                switch (event.key.keysym.sym) {
-
-                    // key 1 pressed
-                    case SDLK_RETURN:
-
-                        // register $t1
-                        registers[9] = 31;
-
-                        printf("KEY ---------------- ENTER\n");
-
-                        break;
-
-                    // key 2 pressed
-                    case SDLK_2:
-
-                        // register $t1
-                        registers[9] = 32;
-
-                        printf("KEY ---------------- 2\n");
-
-                        break;
-
-                }
-
-                */
-
-                }
-
-        }
-
-    }
-
-    return r;
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 int main (int argc, char **argv) {
 
     // reading text file
@@ -2205,14 +2093,7 @@ int main (int argc, char **argv) {
 
                             }
 
-
-
-
-                            //checkKeyPressed();
-
-
                             printf ("pc = %d\n", pc);
-
 
                             char *instruction;
 

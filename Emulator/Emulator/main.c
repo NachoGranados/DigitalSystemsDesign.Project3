@@ -771,6 +771,443 @@ void clearBoard(SDL_Renderer *renderer, SDL_Rect *pixelArray, int pixelPosition)
 
 }
 
+void getRegisterChar(char *registerChar, int registerNumber) {
+
+    char *aux;
+
+    switch(registerNumber) {
+
+        case 0:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "z";
+            registerChar[1] = *aux;
+
+            aux = "e";
+            registerChar[2] = *aux;
+
+            aux = "r";
+            registerChar[3] = *aux;
+
+            aux = "o";
+            registerChar[4] = *aux;
+
+            break;
+
+        case 1:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "a";
+            registerChar[1] = *aux;
+
+            aux = "t";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 2:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "v";
+            registerChar[1] = *aux;
+
+            aux = "0";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 3:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "v";
+            registerChar[1] = *aux;
+
+            aux = "1";
+            registerChar[2] = *aux;
+            break;
+
+        case 4:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "a";
+            registerChar[1] = *aux;
+
+            aux = "0";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 5:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "a";
+            registerChar[1] = *aux;
+
+            aux = "1";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 6:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "a";
+            registerChar[1] = *aux;
+
+            aux = "2";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 7:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "a";
+            registerChar[1] = *aux;
+
+            aux = "3";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 8:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "t";
+            registerChar[1] = *aux;
+
+            aux = "0";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 9:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "t";
+            registerChar[1] = *aux;
+
+            aux = "1";
+            registerChar[2] = *aux;
+
+            break;
+
+
+        case 10:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "t";
+            registerChar[1] = *aux;
+
+            aux = "2";
+            registerChar[2] = *aux;
+
+            break;
+
+
+        case 11:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "t";
+            registerChar[1] = *aux;
+
+            aux = "3";
+            registerChar[2] = *aux;
+
+            break;
+
+
+        case 12:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "t";
+            registerChar[1] = *aux;
+
+            aux = "4";
+            registerChar[2] = *aux;
+
+            break;
+
+
+        case 13:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "t";
+            registerChar[1] = *aux;
+
+            aux = "5";
+            registerChar[2] = *aux;
+
+            break;
+
+
+        case 14:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "t";
+            registerChar[1] = *aux;
+
+            aux = "6";
+            registerChar[2] = *aux;
+
+            break;
+
+
+        case 15:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "t";
+            registerChar[1] = *aux;
+
+            aux = "7";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 16:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "s";
+            registerChar[1] = *aux;
+
+            aux = "0";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 17:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "s";
+            registerChar[1] = *aux;
+
+            aux = "1";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 18:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "s";
+            registerChar[1] = *aux;
+
+            aux = "2";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 19:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "s";
+            registerChar[1] = *aux;
+
+            aux = "3";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 20:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "s";
+            registerChar[1] = *aux;
+
+            aux = "4";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 21:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "s";
+            registerChar[1] = *aux;
+
+            aux = "5";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 22:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "s";
+            registerChar[1] = *aux;
+
+            aux = "6";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 23:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "s";
+            registerChar[1] = *aux;
+
+            aux = "7";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 24:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "t";
+            registerChar[1] = *aux;
+
+            aux = "8";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 25:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "t";
+            registerChar[1] = *aux;
+
+            aux = "9";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 26:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "k";
+            registerChar[1] = *aux;
+
+            aux = "0";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 27:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "k";
+            registerChar[1] = *aux;
+
+            aux = "1";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 28:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "g";
+            registerChar[1] = *aux;
+
+            aux = "p";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 29:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "s";
+            registerChar[1] = *aux;
+
+            aux = "p";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 30:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "f";
+            registerChar[1] = *aux;
+
+            aux = "p";
+            registerChar[2] = *aux;
+
+            break;
+
+        case 31:
+
+            aux = "$";
+            registerChar[0] = *aux;
+
+            aux = "r";
+            registerChar[1] = *aux;
+
+            aux = "a";
+            registerChar[2] = *aux;
+
+            break;
+
+    }
+
+}
+
 void instructionR(char *instruction) {
 
     char opcodeChar[OPCODE_LENGHT];
@@ -779,6 +1216,7 @@ void instructionR(char *instruction) {
     char rdChar[RD_LENGHT];
     char shamtChar[SHAMT_LENGHT];
     char functChar[FUNCT_LENGHT];
+    char registerChar[5];
 
     int opcode;
     int rs;
@@ -802,9 +1240,12 @@ void instructionR(char *instruction) {
     funct = binaryToDecimal(functChar, FUNCT_LENGHT);
 
     printf ("opcode = %s (%d)\n", opcodeChar, opcode);
-    printf ("rs = %s (%d)\n", rsChar, rs);
-    printf ("rt = %s (%d)\n", rtChar, rt);
-    printf ("rd = %s (%d)\n", rdChar, rd);
+    getRegisterChar(registerChar, rs);
+    printf ("rs = %s (%d) (%s)\n", rsChar, rs, registerChar);
+    getRegisterChar(registerChar, rt);
+    printf ("rt = %s (%d) (%s)\n", rtChar, rt, registerChar);
+    getRegisterChar(registerChar, rd);
+    printf ("rd = %s (%d) (%s)\n", rdChar, rd, registerChar);
     printf ("shamt = %s (%d)\n", shamtChar, shamt);
     printf ("funct = %s (%d)\n", functChar, funct);
 
@@ -1007,6 +1448,7 @@ void instructionI(char *instruction) {
     char rsChar[RS_LENGHT];
     char rtChar[RT_LENGHT];
     char immediateChar[16];
+    char registerChar[5];
 
     int opcode;
     int rs;
@@ -1036,8 +1478,10 @@ void instructionI(char *instruction) {
     }
 
     printf ("opcode = %s (%d)\n", opcodeChar, opcode);
-    printf ("rs = %s (%d)\n", rsChar, rs);
-    printf ("rt = %s (%d)\n", rtChar, rt);
+    getRegisterChar(registerChar, rs);
+    printf ("rs = %s (%d) (%s)\n", rsChar, rs, registerChar);
+    getRegisterChar(registerChar, rt);
+    printf ("rt = %s (%d) (%s)\n", rtChar, rt, registerChar);
     printf ("immediate = %s (%d)\n", immediateChar, immediate);
 
     switch(opcode){

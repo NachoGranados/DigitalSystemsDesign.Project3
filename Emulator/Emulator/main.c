@@ -721,7 +721,28 @@ void syscallWait() {
 
 }
 
-void drawPoint(SDL_Renderer *renderer, SDL_Rect *pixelArray, int x, int y) {
+
+
+
+
+
+void getRGB(int *rgbArray, int colorDecimal) {
+
+    int b = colorDecimal / 65536;
+    int g = (colorDecimal - (b * 65536)) / 256;
+    int r = colorDecimal - (b * 65536) - (g * 256);
+
+    rgbArray[0] = r;
+    rgbArray[1] = g;
+    rgbArray[2] = b;
+
+}
+
+void drawPoint(SDL_Renderer *renderer, SDL_Rect *pixelArray, int x, int y, int colorDecimal) {
+
+    int rgbArray[3];
+
+    getRGB(rgbArray, colorDecimal);
 
     int ptr = 0;
 
@@ -731,8 +752,7 @@ void drawPoint(SDL_Renderer *renderer, SDL_Rect *pixelArray, int x, int y) {
 
             if(i == x && j == y) {
 
-                // light blue
-                SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+                SDL_SetRenderDrawColor(renderer, rgbArray[0], rgbArray[1], rgbArray[2], 255);
 
                 SDL_RenderFillRect(renderer, &pixelArray[ptr]);
 
@@ -765,7 +785,7 @@ void clearBoard(SDL_Renderer *renderer, SDL_Rect *pixelArray, int pixelPosition)
         SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
 
         // QUITAR
-        flag = 1;
+        //flag = 1;
 
     }
 
@@ -1312,8 +1332,9 @@ void instructionR(char *instruction) {
                         printf("%s\n", "DRAWPOINT");
                         printf("x = %d\n", registers[5]); // $a1
                         printf("y = %d\n", registers[4]); // $a0
+                        printf("color = %d\n", registers[6]); // $a2
 
-                        drawPoint(renderer, pixelArray, registers[5], registers[4]);
+                        drawPoint(renderer, pixelArray, registers[5], registers[4], registers[6]);
 
                     // draw paddle
                     } else if((pc >= 364) & (pc < 373)) {
@@ -1323,8 +1344,9 @@ void instructionR(char *instruction) {
                         printf("%s\n", "DRAWPADDLE");
                         printf("x = %d\n", registers[4]); // $a0
                         printf("y = %d\n", registers[9]); // $t1
+                        printf("color = %d\n", registers[6]); // $a2
 
-                        drawPoint(renderer, pixelArray, registers[9], registers[4]);
+                        drawPoint(renderer, pixelArray, registers[9], registers[4], registers[6]);
 
                     }
 
@@ -1625,6 +1647,8 @@ void instructionI(char *instruction) {
                     immediate /= 4;
 
                     li(rt, dataInstructions[immediate]);
+
+                    printf("dataInstruction[immediate] = %d\n", dataInstructions[immediate]);
 
                     /*
 
@@ -2194,19 +2218,9 @@ int main (int argc, char **argv) {
 
                                 printf ("Type J\n");
 
-                                //instructionJ(instruction);
+                                instructionJ(instruction);
 
-                                //pc--;
-
-
-                                // QUITAR
-                                if(pc > 1) {
-
-                                    instructionJ(instruction);
-
-                                    pc--;
-
-                                }
+                                pc--;
 
                             // I instruction
                             } else {
@@ -2249,6 +2263,7 @@ int main (int argc, char **argv) {
                             */
 
 
+
                             /*
 
                             char flag;
@@ -2260,6 +2275,8 @@ int main (int argc, char **argv) {
 
 
 
+
+
                             if(flag) {
 
                                 char flag;
@@ -2268,6 +2285,8 @@ int main (int argc, char **argv) {
                                 printf("\n");
 
                             }
+
+
 
 
 

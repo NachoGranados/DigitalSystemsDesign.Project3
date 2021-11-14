@@ -49,7 +49,7 @@ const int PIXEL_ARRAY_ROW_SIZE = 32;
 const int PIXEL_ARRAY_COLUMN_SIZE = 64;
 
 // Global variables
-int pc = 0;
+int pc = -1;
 
 int *dataInstructions;
 
@@ -60,6 +60,22 @@ SDL_Renderer *renderer;
 SDL_Rect *pixelArray;
 
 int keyPressed;
+
+
+
+
+
+
+
+
+// QUITAR
+int flag = 0;
+
+
+
+
+
+
 
 /*
 registers[0]     -> $zero   -> The Constant Value 0
@@ -342,7 +358,7 @@ void bne(int rs, int rt, int SignExtImm) {
 
     if(registers[rs] != registers[rt]) {
 
-        pc = pc + 1 + SignExtImm;
+        pc = pc + SignExtImm;
 
     }
 
@@ -604,8 +620,6 @@ void sltu(int rs, int rt, int rd) {
 
 void sll(int rt, int rd, int shamt) {
 
-    //int aux = registers[rt] * (2 * shamt);
-
     int aux = registers[rt] * pow(2, shamt);
 
     registers[rd] = aux;
@@ -613,8 +627,6 @@ void sll(int rt, int rd, int shamt) {
 }
 
 void srl(int rt, int rd, int shamt) {
-
-    //int aux = registers[rt] / (2 * shamt);
 
     int aux = registers[rt] / pow(2, shamt);
 
@@ -672,9 +684,9 @@ void li(int rt, int immediate) {
 
 }
 
-void move(int rs, int rd) {
+void move(int rt, int rd) {
 
-    registers[rd] = registers[rs];
+    registers[rd] = registers[rt];
 
 }
 
@@ -719,6 +731,7 @@ void drawPoint(SDL_Renderer *renderer, SDL_Rect *pixelArray, int x, int y) {
 
             if(i == x && j == y) {
 
+                // light blue
                 SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
 
                 SDL_RenderFillRect(renderer, &pixelArray[ptr]);
@@ -736,41 +749,27 @@ void drawPoint(SDL_Renderer *renderer, SDL_Rect *pixelArray, int x, int y) {
 
 }
 
-
-
 void clearBoard(SDL_Renderer *renderer, SDL_Rect *pixelArray, int pixelPosition) {
 
-    SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+    // black
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
     SDL_RenderFillRect(renderer, &pixelArray[pixelPosition / 4]);
 
     // Show what was drawn
     SDL_RenderPresent(renderer);
 
-    /*
-    if(pixelPosition == 0) {
+    if(pixelPosition == 4) {
 
-        pc = 11000;
+        // light blue
+        SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+
+        // QUITAR
+        flag = 1;
 
     }
-    */
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void instructionR(char *instruction) {
 
@@ -816,7 +815,7 @@ void instructionR(char *instruction) {
             printf("%s\n", "sll");
 
             // must be ignored
-            //sll(rt, rd, shamt);
+            sll(rt, rd, shamt);
 
             break;
 
@@ -856,18 +855,37 @@ void instructionR(char *instruction) {
 
         case 33:
 
-            printf("%s\n", "addu o move");
+            // addu o move
 
+            // addu
             if(rt == 28) {
+
+                printf("%s\n", "addu");
 
                 // register $v0
                 if(rs == 2) {
 
-                    printf("%s\n", "DRAWPOINT");
-                    printf("x = %d\n", registers[5]);
-                    printf("y = %d\n", registers[4]);
+                    // draw point
+                    if((pc >= 429) & (pc < 434)) {
 
-                    drawPoint(renderer, pixelArray, registers[5], registers[4]);
+                        printf("%s\n", "DRAWPOINT");
+                        printf("x = %d\n", registers[5]); // $a1
+                        printf("y = %d\n", registers[4]); // $a0
+
+                        drawPoint(renderer, pixelArray, registers[5], registers[4]);
+
+                    // draw paddle
+                    } else if((pc >= 364) & (pc < 373)) {
+
+                        srl(9, 9, 6);
+
+                        printf("%s\n", "DRAWPADDLE");
+                        printf("x = %d\n", registers[4]); // $a0
+                        printf("y = %d\n", registers[9]); // $t1
+
+                        drawPoint(renderer, pixelArray, registers[9], registers[4]);
+
+                    }
 
                 // register $t1
                 } else if(rs == 9) {
@@ -880,7 +898,17 @@ void instructionR(char *instruction) {
 
                 }
 
+            // move
+            } else if(rs == 0) {
+
+                printf("%s\n", "move");
+
+                move(rt, rd);
+
+            // addu
             } else {
+
+                printf("%s\n", "addu");
 
                 addu(rs, rt, rd);
 
@@ -895,7 +923,16 @@ void instructionR(char *instruction) {
             printf("registers[rs] = %d\n", registers[rs]);
             printf("registers[rt] = %d\n", registers[rt]);
 
-            sub(rs, rt, rd);
+            // register $s2
+            if(rs == 18) {
+
+                registers[rd] = registers[rs] - rt;
+
+            } else {
+
+                sub(rs, rt, rd);
+
+            }
 
             printf("registers[rd] = %d\n", registers[rd]);
 
@@ -1045,7 +1082,7 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "bne");
 
-            //bne(rs, rt, immediate);
+            bne(rs, rt, immediate);
 
             break;
 
@@ -1078,7 +1115,8 @@ void instructionI(char *instruction) {
 
         case 9:
 
-            printf("%s\n", "addiu o li");
+            // addiu o li
+            printf("%s\n", "li");
 
             addiu(rs, rt, immediate);
 
@@ -1120,10 +1158,8 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "lui");
 
-            /*
-            must be ignored
-            lui(rs, rt, immediate);
-            */
+            //must be ignored
+            //lui(rs, rt, immediate);
 
             break;
 
@@ -1615,9 +1651,6 @@ int main (int argc, char **argv) {
     // creating memory array
     memory = malloc(MEMORY_SIZE * sizeof(int));
 
-    // global pointer must be positioned at the start of the memory array
-    //registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
-
     // stack pointer must be positioned at the end of the memory array
     registers[STACK_POINTER_POSITION] = 2000;
 
@@ -1628,7 +1661,6 @@ int main (int argc, char **argv) {
 
 	SDL_Window *window = SDL_CreateWindow("MARS MIPS EMULATOR", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 
-	//SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     //SDL_Rect *pixelArray;
@@ -1661,6 +1693,8 @@ int main (int argc, char **argv) {
                         // text instructions execution
                         while(pc < textInstructionsSize) {
 
+                            pc++;
+
                             // check if a key has been pressed
                             while(SDL_PollEvent(&event)) {
 
@@ -1685,24 +1719,11 @@ int main (int argc, char **argv) {
 
 
 
-                            //pc = checkKeyPressed();
+                            //checkKeyPressed();
 
-
-
-
-                            //printf ("$t1 = %d\n", registers[9]);
 
                             printf ("pc = %d\n", pc);
 
-                            /*
-
-                            if(startEvent.type == SDL_QUIT) {
-
-                                initRunning = 0;
-
-                            }
-
-                            */
 
                             char *instruction;
 
@@ -1729,6 +1750,9 @@ int main (int argc, char **argv) {
 
                                 printf ("Type J\n");
 
+                                //instructionJ(instruction);
+
+                                //pc--;
 
 
                                 // QUITAR
@@ -1739,24 +1763,6 @@ int main (int argc, char **argv) {
                                     pc--;
 
                                 }
-
-                                /*
-
-                                // QUITAR
-                                if(pc > 350) {
-
-                                    pc = 5000;
-
-                                    initRunning = 0;
-
-                                }
-
-                                */
-
-
-                                //pc--;
-
-                                //instructionJ(instruction);
 
                             // I instruction
                             } else {
@@ -1769,19 +1775,6 @@ int main (int argc, char **argv) {
 
                             // reset $zero
                             registers[0] = 0;
-
-                            pc++;
-
-                            //printf("\e[1;1H\e[2J");
-
-
-
-
-                            //SDL_Delay(50);
-
-
-
-
 
 
 
@@ -1796,6 +1789,23 @@ int main (int argc, char **argv) {
 
                             }
 
+                            */
+
+                            /*
+
+                            if(pc > 1) {
+
+                                char flag;
+                                printf("Continue:");
+                                scanf("%c", &flag);
+                                printf("\n");
+
+                            }
+
+                            */
+
+
+                            /*
 
                             char flag;
                             printf("Continue:");
@@ -1803,6 +1813,20 @@ int main (int argc, char **argv) {
                             printf("\n");
 
                             */
+
+
+
+                            if(flag) {
+
+                                char flag;
+                                printf("Continue:");
+                                scanf("%c", &flag);
+                                printf("\n");
+
+                            }
+
+
+
 
 
                             /*
@@ -1817,6 +1841,8 @@ int main (int argc, char **argv) {
                             }
 
                             */
+
+
 
 
 
@@ -2585,6 +2611,78 @@ int main (int argc, char **argv) {
     shamt = 00000 (0)
     funct = 001100 (12)
     syscall
+
+
+
+
+
+
+
+
+
+
+
+
+# $a0 contains x position, $a1 contains y position, $a2 contains the color
+DrawPoint:
+		sll $t0, $a1, 6   # multiply y-coordinate by 64 (length of the field)
+		addu $v0, $a0, $t0
+		sll $v0, $v0, 2
+		addu $v0, $v0, $gp
+		sw $a2, ($v0)		# draw the color to the location
+
+		jr $ra
+
+
+
+
+# $a0 contains the paddles x position
+# $a1 contains paddles y-top position
+# $a2 contains paddle color
+# $a3 contains the direction
+# $t0 is the loop counter
+# $t1 is the current y coordinate, the x coordinate does not change
+# after completed $a1 "returns" aka has stored the new y-top position, $a3 "returns" the direction
+# careful to make sure nothing inbetween alters these  $a registers
+DrawPaddle:
+	# objective: look at the direction, draw a point on the correct side, erase a point on the correct side
+	beq $a3, 0x02000000, down
+	bne $a3, 0x01000000, NoMove
+
+	...
+
+	NoMove:
+		# else do nothing, make sure the direction is nothing
+		li $a3, 0
+	Move:
+		li $t0, 6
+	StartPLoop:
+		subi $t0, $t0, 1
+		addu $t1, $a1, $t0
+
+		# Converts to memory address
+		sll $t1, $t1, 6   # multiply y-coordinate by 64 (length of the field)
+		addu $v0, $a0, $t1
+		sll $v0, $v0, 2
+		addu $v0, $v0, $gp
+
+		sw $a2, ($v0)
+		beqz $t0, EndPLoop
+		j StartPLoop
+	EndPLoop:
+		jr $ra
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

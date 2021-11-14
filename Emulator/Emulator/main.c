@@ -1498,7 +1498,8 @@ void instructionI(char *instruction) {
             printf("registers[rs] = %d\n", registers[rs]);
             printf("registers[rt] = %d\n", registers[rt]);
 
-            if((keyPressed == 1) & ((pc >= 210) & (pc < 2014))) {
+            // key 1
+            if((keyPressed == 1) & ((pc >= 210) & (pc < 214))) {
 
                 registers[9] = 49;
 
@@ -1508,7 +1509,10 @@ void instructionI(char *instruction) {
 
                 printf("pc = %d\n", pc);
 
-            } else if((keyPressed == 1) & ((pc >= 214) & (pc < 218))) {
+                printf("PAYER 1 MODE\n");
+
+            // key 2
+            } else if((keyPressed == 2) & ((pc >= 214) & (pc < 218))) {
 
                 registers[9] = 50;
 
@@ -1517,6 +1521,8 @@ void instructionI(char *instruction) {
                 keyPressed = 0;
 
                 printf("pc = %d\n", pc);
+
+                printf("PAYER 2 MODE\n");
 
             } else {
 
@@ -1531,6 +1537,8 @@ void instructionI(char *instruction) {
         case 5:
 
             printf("%s\n", "bne");
+            printf("registers[rs] = %d\n", registers[rs]);
+            printf("registers[rt] = %d\n", registers[rt]);
 
             bne(rs, rt, immediate);
 
@@ -1539,10 +1547,37 @@ void instructionI(char *instruction) {
         case 6:
 
             printf("%s\n", "blez");
+            printf("registers[rs] = %d\n", registers[rs]);
+
+            // register $t1
+            if(rs == 9) {
+
+                // check if a key has been pressed
+                // 3 -> a
+                // 4 -> z
+                // 5 -> k
+                // 6 -> m
+                if((keyPressed == 3) | (keyPressed == 4) |
+                   (keyPressed == 5) | (keyPressed == 6)) {
+
+                    // register $t1
+                    registers[9] = 1;
+
+                    keyPressed = 0;
+
+                }
+
+            }
+
+
+            // QUITAR
+            flag = 1;
+
+
 
             blez(rs, immediate);
 
-            //flag = 1;
+
 
             break;
 
@@ -1631,16 +1666,27 @@ void instructionI(char *instruction) {
             if(rs == 1) {
 
                 // key pressed  0xFFFF0004                 0xFFFF0000
-                if(immediate == 4294901764 || immediate == 4294901760) {
+                //if(immediate == 4294901764 || immediate == 4294901760) {
 
                     // CHECK IF A KEY HAS BEEN PRESSED
 
                 // data instruction
+                //} else {
+
+
+                // data instruction
+                if(pc == 320) {
+
+                    // register $t1
+                    registers[9] = -1;
+
                 } else {
 
                     immediate /= 4;
 
                     li(rt, dataInstructions[immediate]);
+
+                    printf("registers[rt] = %d\n", registers[rt]);
 
                     //printf("dataInstruction[immediate] = %d\n", dataInstructions[immediate]);
 
@@ -1726,6 +1772,8 @@ void instructionI(char *instruction) {
                     immediate /= 4;
 
                     dataInstructions[immediate] = registers[rt];
+
+                    printf("dataInstructions[immediate] = %d\n", dataInstructions[immediate]);
 
                 // $v0 as destiny register
                 } else if(rs == 2) {
@@ -2081,13 +2129,49 @@ int main (int argc, char **argv) {
 
                                     keyPressed = 1;
 
-                                }
+                                    // QUITAR
+                                    //flag = 1;
 
                                 // key 2 pressed
-                                if ((event.key.keysym.sym == SDLK_2) |
-                                    (event.key.keysym.sym == SDLK_KP_2)) {
+                                } else if ((event.key.keysym.sym == SDLK_2) |
+                                           (event.key.keysym.sym == SDLK_KP_2)) {
 
-                                    keyPressed = 1;
+                                    keyPressed = 2;
+
+                                    // QUITAR
+                                    //flag = 1;
+
+                                // key a pressed
+                                } else if (event.key.keysym.sym == SDLK_a) {
+
+                                    keyPressed = 3;
+
+                                    // QUITAR
+                                    flag = 1;
+
+                                // key z pressed
+                                } else if (event.key.keysym.sym == SDLK_z) {
+
+                                    keyPressed = 4;
+
+                                    // QUITAR
+                                    flag = 1;
+
+                                // key k pressed
+                                } else if (event.key.keysym.sym == SDLK_k) {
+
+                                    keyPressed = 5;
+
+                                    // QUITAR
+                                    flag = 1;
+
+                                // key m pressed
+                                } else if (event.key.keysym.sym == SDLK_m) {
+
+                                    keyPressed = 6;
+
+                                    // QUITAR
+                                    flag = 1;
 
                                 }
 
@@ -2177,7 +2261,7 @@ int main (int argc, char **argv) {
 
 
 
-
+                            /*
 
                             if(flag) {
 
@@ -2188,6 +2272,15 @@ int main (int argc, char **argv) {
 
                             }
 
+                            */
+
+
+
+
+
+
+
+
 
 
 
@@ -2195,6 +2288,7 @@ int main (int argc, char **argv) {
 
 
                             /*
+
 
                             if(pc > 209) {
 
@@ -2206,6 +2300,9 @@ int main (int argc, char **argv) {
                             }
 
                             */
+
+
+
 
 
 

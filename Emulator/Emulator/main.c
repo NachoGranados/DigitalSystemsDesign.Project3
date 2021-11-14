@@ -364,6 +364,16 @@ void bne(int rs, int rt, int SignExtImm) {
 
 }
 
+void blez(int rs, int SignExtImm) {
+
+    if(registers[rs] <= 0) {
+
+        pc = pc + SignExtImm;
+
+    }
+
+}
+
 void j(int JumpAddr) {
 
     pc = JumpAddr;
@@ -783,9 +793,6 @@ void clearBoard(SDL_Renderer *renderer, SDL_Rect *pixelArray, int pixelPosition)
 
         // light blue
         SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
-
-        // QUITAR
-        //flag = 1;
 
     }
 
@@ -1300,9 +1307,13 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "syscall");
 
-            syscallWait();
+            //syscallWait();
 
-            //SDL_Delay(250);
+            // register $a0
+            //int miliseconds = registers[4];
+
+            // register $a0
+            SDL_Delay(registers[4]);
 
             break;
 
@@ -1549,6 +1560,16 @@ void instructionI(char *instruction) {
             printf("%s\n", "bne");
 
             bne(rs, rt, immediate);
+
+            break;
+
+        case 6:
+
+            printf("%s\n", "blez");
+
+            blez(rs, immediate);
+
+            //flag = 1;
 
             break;
 

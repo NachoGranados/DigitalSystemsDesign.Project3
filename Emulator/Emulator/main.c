@@ -736,6 +736,42 @@ void drawPoint(SDL_Renderer *renderer, SDL_Rect *pixelArray, int x, int y) {
 
 }
 
+
+
+void clearBoard(SDL_Renderer *renderer, SDL_Rect *pixelArray, int pixelPosition) {
+
+    SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
+
+    SDL_RenderFillRect(renderer, &pixelArray[pixelPosition / 4]);
+
+    // Show what was drawn
+    SDL_RenderPresent(renderer);
+
+    /*
+    if(pixelPosition == 0) {
+
+        pc = 11000;
+
+    }
+    */
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void instructionR(char *instruction) {
 
     char opcodeChar[OPCODE_LENGHT];
@@ -824,11 +860,25 @@ void instructionR(char *instruction) {
 
             if(rt == 28) {
 
-                printf("%s\n", "DRAWPOINT");
-                printf("x = %d\n", registers[5]);
-                printf("y = %d\n", registers[4]);
+                // register $v0
+                if(rs == 2) {
 
-                drawPoint(renderer, pixelArray, registers[5], registers[4]);
+                    printf("%s\n", "DRAWPOINT");
+                    printf("x = %d\n", registers[5]);
+                    printf("y = %d\n", registers[4]);
+
+                    drawPoint(renderer, pixelArray, registers[5], registers[4]);
+
+                // register $t1
+                } else if(rs == 9) {
+
+                    printf("%s\n", "CLEARBOARD");
+                    printf("$t1 = %d\n", registers[9]);
+
+                    // register $t1
+                    clearBoard(renderer, pixelArray, registers[9]);
+
+                }
 
             } else {
 
@@ -842,7 +892,12 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "sub");
 
+            printf("registers[rs] = %d\n", registers[rs]);
+            printf("registers[rt] = %d\n", registers[rt]);
+
             sub(rs, rt, rd);
+
+            printf("registers[rd] = %d\n", registers[rd]);
 
             break;
 
@@ -964,7 +1019,9 @@ void instructionI(char *instruction) {
 
                 keyPressed = 0;
 
-            } if((keyPressed == 1) & ((pc >= 214) & (pc < 218))) {
+                printf("pc = %d\n", pc);
+
+            } else if((keyPressed == 1) & ((pc >= 214) & (pc < 218))) {
 
                 registers[9] = 50;
 
@@ -972,9 +1029,13 @@ void instructionI(char *instruction) {
 
                 keyPressed = 0;
 
+                printf("pc = %d\n", pc);
+
             } else {
 
                 beq(rs, rt, immediate);
+
+                printf("pc = %d\n", pc);
 
             }
 
@@ -1735,9 +1796,6 @@ int main (int argc, char **argv) {
 
                             }
 
-                            */
-
-                            /*
 
                             char flag;
                             printf("Continue:");
@@ -1745,6 +1803,22 @@ int main (int argc, char **argv) {
                             printf("\n");
 
                             */
+
+
+                            /*
+
+                            if(pc > 209) {
+
+                                char flag;
+                                printf("Continue:");
+                                scanf("%c", &flag);
+                                printf("\n");
+
+                            }
+
+                            */
+
+
 
 
 
@@ -1787,13 +1861,13 @@ int main (int argc, char **argv) {
         }
 
         // black background
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
         // Clear window
         SDL_RenderClear(renderer);
 
         // Light blue color
-        SDL_SetRenderDrawColor(renderer, 0, 102, 204, 0);
+        //SDL_SetRenderDrawColor(renderer, 0, 102, 204, 0);
 
         // Draw rectangles
         showPixels(renderer, pixelArray, PIXEL_ARRAY_SIZE);

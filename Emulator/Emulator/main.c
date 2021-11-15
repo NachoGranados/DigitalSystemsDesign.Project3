@@ -75,22 +75,6 @@ SDL_Rect *pixelArray;
 
 int keyPressed;
 
-
-
-
-
-
-
-
-// QUITAR
-int flag = 0;
-
-
-
-
-
-
-
 /*
 registers[0]     -> $zero   -> The Constant Value 0
 registers[1]     -> $at     -> Assembler Temporary
@@ -1268,7 +1252,6 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "sll");
 
-            // must be ignored
             sll(rt, rd, shamt);
 
             break;
@@ -1321,11 +1304,6 @@ void instructionR(char *instruction) {
                     // draw point
                     if((pc >= 429) & (pc < 434)) {
 
-                        printf("%s\n", "DRAWPOINT");
-                        printf("x = %d\n", registers[5]); // $a1
-                        printf("y = %d\n", registers[4]); // $a0
-                        printf("color = %d\n", registers[6]); // $a2
-
                         drawPoint(renderer, pixelArray, registers[5], registers[4], registers[6]);
 
                     // draw paddle
@@ -1333,20 +1311,12 @@ void instructionR(char *instruction) {
 
                         srl(9, 9, 6);
 
-                        printf("%s\n", "DRAWPADDLE");
-                        printf("x = %d\n", registers[4]); // $a0
-                        printf("y = %d\n", registers[9]); // $t1
-                        printf("color = %d\n", registers[6]); // $a2
-
                         drawPoint(renderer, pixelArray, registers[9], registers[4], registers[6]);
 
                     }
 
                 // register $t1
                 } else if(rs == 9) {
-
-                    printf("%s\n", "CLEARBOARD");
-                    printf("$t1 = %d\n", registers[9]);
 
                     // register $t1
                     clearBoard(renderer, pixelArray, registers[9]);
@@ -1375,12 +1345,7 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "sub");
 
-            printf("registers[rs] = %d\n", registers[rs]);
-            printf("registers[rt] = %d\n", registers[rt]);
-
             sub(rs, rt, rd);
-
-            printf("registers[rd] = %d\n", registers[rd]);
 
             break;
 
@@ -1411,68 +1376,6 @@ void instructionR(char *instruction) {
         case 38:
 
             printf("%s\n", "xori");
-
-            /*
-
-                pc = 592
-                Type I
-                opcode = 001101 (13)
-                rs = 00001U (1) ($at)
-                rt = 00001 (1) ($at)
-                immediate = 0000000000000000 (-1)
-                ori
-
-                Continue:
-
-                pc = 593
-                Type R
-                opcode = 000000 (0)
-                rs = 01100 (12) ($t4)
-                rt = 00001 (1) ($at)
-                rd = 01100 (12) ($t4)
-                shamt = 00000 (0)
-                funct = 100110 (38)
-                xori
-
-            */
-
-            /*
-
-            char tempRs[IMMEDIATE_LENGHT];
-
-            char tempRt[IMMEDIATE_LENGHT];
-
-            // negative number
-            if(registers[rs] < 0) {
-
-                decimalToBinary(registers[rs], tempRs);
-
-            } else if(registers[rt] < 0) {
-
-                decimalToBinary(registers[rt], tempRt);
-
-            }
-
-
-
-
-
-
-            if(isNegative(immediateChar) == 1) {
-
-                complement2(immediateChar, IMMEDIATE_LENGHT);
-
-                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
-
-            } else {
-
-                immediate = binaryToDecimal(immediateChar, IMMEDIATE_LENGHT);
-
-            }
-
-            */
-
-
 
             xori(rs, rt, rd);
 
@@ -1555,8 +1458,6 @@ void instructionI(char *instruction) {
         case 4:
 
             printf("%s\n", "beq");
-            printf("registers[rs] = %d\n", registers[rs]);
-            printf("registers[rt] = %d\n", registers[rt]);
 
             // key 1
             if((keyPressed == KEY_1) & ((pc >= 210) & (pc < 214))) {
@@ -1567,10 +1468,6 @@ void instructionI(char *instruction) {
 
                 keyPressed = 0;
 
-                printf("pc = %d\n", pc);
-
-                printf("PLAYER 1 MODE\n");
-
             // key 2
             } else if((keyPressed == KEY_2) & ((pc >= 214) & (pc < 218))) {
 
@@ -1580,15 +1477,9 @@ void instructionI(char *instruction) {
 
                 keyPressed = NO_KEY;
 
-                printf("pc = %d\n", pc);
-
-                printf("PLAYER 2 MODE\n");
-
             } else {
 
                 beq(rs, rt, immediate);
-
-                printf("pc = %d\n", pc);
 
             }
 
@@ -1597,8 +1488,6 @@ void instructionI(char *instruction) {
         case 5:
 
             printf("%s\n", "bne");
-            printf("registers[rs] = %d\n", registers[rs]);
-            printf("registers[rt] = %d\n", registers[rt]);
 
             bne(rs, rt, immediate);
 
@@ -1607,7 +1496,6 @@ void instructionI(char *instruction) {
         case 6:
 
             printf("%s\n", "blez");
-            printf("registers[rs] = %d\n", registers[rs]);
 
             // register $t1
             if(rs == 9) {
@@ -1622,10 +1510,6 @@ void instructionI(char *instruction) {
                 }
 
             }
-
-
-            // QUITAR
-            //flag = 1;
 
             blez(rs, immediate);
 
@@ -1642,19 +1526,7 @@ void instructionI(char *instruction) {
 
             }
 
-
-            // QUITAR
-            printf ("registers[rt] = %d\n", registers[rt]);
-
-
             addi(rs, rt, immediate);
-
-
-            // QUITAR
-            printf ("registers[rt] = %d\n", registers[rt]);
-
-
-
 
             break;
 
@@ -1713,11 +1585,6 @@ void instructionI(char *instruction) {
 
             }
 
-            // QUITAR
-            //printf("%s\n", "ORI ------------------------------");
-
-            //counter++;
-
             break;
 
         case 15:
@@ -1736,15 +1603,6 @@ void instructionI(char *instruction) {
             // key pressed or data instruction
             if(rs == 1) {
 
-                // key pressed  0xFFFF0004                 0xFFFF0000
-                //if(immediate == 4294901764 || immediate == 4294901760) {
-
-                    // CHECK IF A KEY HAS BEEN PRESSED
-
-                // data instruction
-                //} else {
-
-
                 // data instruction
                 if(pc == 320) {
 
@@ -1762,42 +1620,12 @@ void instructionI(char *instruction) {
 
                     li(rt, dataInstructions[immediate]);
 
-                    printf("registers[rt] = %d\n", registers[rt]);
-
-                    //printf("dataInstruction[immediate] = %d\n", dataInstructions[immediate]);
-
-                    /*
-
-                    if(dataInstructions[immediate] < MAX_IMMEDIATE_VALUE) {
-
-                        li(rt, dataInstructions[immediate]);
-
-                    } else {
-
-                        // SE CARGA UN COLOR
-
-                        // TOMAR EN CUENTA EL NEGRO QUE ES 0x00000000
-
-                        //li(rt, dataInstructions[immediate]);
-
-                    }
-
-                    */
-
                 }
 
             // stack use
             } else if(rs == 29) {
 
-                // QUITAR
-                printf ("memory[rs] = %d\n", memory[rs]);
-                printf ("registers[rt] = %d\n", registers[rt]);
-
                 lw(rs, rt, immediate);
-
-                // QUITAR
-                printf ("memory[rs] = %d\n", memory[rs]);
-                printf ("registers[rt] = %d\n", registers[rt]);
 
             }
 
@@ -1862,8 +1690,6 @@ void instructionI(char *instruction) {
 
                     dataInstructions[immediate] = registers[rt];
 
-                    printf("dataInstructions[immediate] = %d\n", dataInstructions[immediate]);
-
                 // $v0 as destiny register
                 } else if(rs == 2) {
 
@@ -1872,13 +1698,7 @@ void instructionI(char *instruction) {
                 // stack use
                 } else {
 
-                    // QUITAR
-                    printf ("memory[registers[rs]] = %d\n", memory[registers[rs]]);
-
                     sw(rs, rt, immediate);
-
-                    // QUITAR
-                    printf ("memory[registers[rs]] = %d\n", memory[registers[rs]]);
 
                 }
 
@@ -1939,13 +1759,7 @@ void instructionJ(char *instruction) {
 
         printf("%s\n", "jal");
 
-        // QUITAR
-        printf ("registers[31] = %d\n", registers[31]);
-
         jal(address);
-
-        // QUITAR
-        printf ("registers[31] = %d\n", registers[31]);
 
         break;
 
@@ -2020,57 +1834,6 @@ void showPixels(SDL_Renderer *renderer, SDL_Rect *pixelArray, int arraySize) {
 }
 
 int main (int argc, char **argv) {
-
-    /*
-
-    // a = 5(00000101), b = 9(00001001)
-    int a = 5, b = 9;
-
-    // The result is 00000001
-    printf("a = %d, b = %d\n", a, b);
-    printf("a&b = %d\n", a & b);
-
-    // The result is 00001101
-    printf("a|b = %d\n", a | b);
-
-    // The result is 00001100
-    printf("a^b = %d\n", a ^ b);
-
-    // The result is 11111010
-    printf("~a = %d\n", a = ~a);
-
-    // The result is 00010010
-    printf("b<<1 = %d\n", b << 1);
-
-    // The result is 00000100
-    printf("b>>1 = %d\n", b >> 1);
-
-    return 0;
-
-    */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     // reading text file
     char **textInstructions;
@@ -2269,61 +2032,31 @@ int main (int argc, char **argv) {
 
                                     keyPressed = KEY_1;
 
-                                    printf("KEY 1\n");
-
-                                    // QUITAR
-                                    //flag = 1;
-
                                 // key 2 pressed
                                 } else if ((event.key.keysym.sym == SDLK_2) |
                                            (event.key.keysym.sym == SDLK_KP_2)) {
 
                                     keyPressed = KEY_2;
 
-                                    printf("KEY 2\n");
-
-                                    // QUITAR
-                                    //flag = 1;
-
                                 // key a pressed
                                 } else if (event.key.keysym.sym == SDLK_a) {
 
                                     keyPressed = KEY_A;
-
-                                    printf("KEY A\n");
-
-                                    // QUITAR
-                                    flag = 1;
 
                                 // key z pressed
                                 } else if (event.key.keysym.sym == SDLK_z) {
 
                                     keyPressed = KEY_Z;
 
-                                    printf("KEY Z\n");
-
-                                    // QUITAR
-                                    flag = 1;
-
                                 // key k pressed
                                 } else if (event.key.keysym.sym == SDLK_k) {
 
                                     keyPressed = KEY_K;
 
-                                    printf("KEY K\n");
-
-                                    // QUITAR
-                                    flag = 1;
-
                                 // key m pressed
                                 } else if (event.key.keysym.sym == SDLK_m) {
 
                                     keyPressed = KEY_M;
-
-                                    printf("KEY M\n");
-
-                                    // QUITAR
-                                    flag = 1;
 
                                 }
 
@@ -2372,107 +2105,6 @@ int main (int argc, char **argv) {
                             // reset $zero
                             registers[0] = 0;
 
-
-
-
-
-
-                            /*
-
-                            if(pc > 300) {
-
-                                pc = 4444;
-
-                            }
-
-                            */
-
-                            /*
-
-                            if(pc > 1) {
-
-                                char flag;
-                                printf("Continue:");
-                                scanf("%c", &flag);
-                                printf("\n");
-
-                            }
-
-                            */
-
-
-
-
-
-
-
-
-
-
-
-
-                            /*
-
-                            if(pc >= 310) {
-
-                                flag = 1;
-
-                            }
-
-                            */
-
-                            //flag = 1;
-
-
-
-
-
-                            /*
-
-                            if(flag) {
-
-                                char flag;
-                                printf("Continue:");
-                                scanf("%c", &flag);
-                                printf("\n");
-
-                            }
-
-                            */
-
-
-
-
-
-
-
-                            /*
-
-                            if(pc > 209) {
-
-                                char flag;
-                                printf("Continue:");
-                                scanf("%c", &flag);
-                                printf("\n");
-
-                            }
-
-                            */
-
-
-
-
-
-
-                            // QUITAR
-                            //printf("counter = %d\n", counter);
-
-
-
-
-
-
-
                         }
 
                         initRunning = 0;
@@ -2483,25 +2115,7 @@ int main (int argc, char **argv) {
 
             }
 
-
-
-
-
-
-
-            // QUITAR
-            //printf("counter = %d", counter);
-
-            //initRunning = 0;
-
-
-
-
-
         }
-
-        // black background
-        //SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
         // Clear window
         SDL_RenderClear(renderer);
@@ -2517,300 +2131,12 @@ int main (int argc, char **argv) {
 
     }
 
-
-
-
-
-
-
-
-
     // Free memory
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
 
-    return 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-
-
-    // reading text file
-    char **textInstructions;
-
-    int nptrs = NUMBER_POINTERS;
-
-    int textInstructionsSize = 0;
-
-    char buffer[MAX_CHARACTERS];
-
-    char *file = "pongText.txt";
-
-    FILE *fp = fopen(file, "r");
-
-    if(!fp) {
-
-        perror("text file open failed");
-
-        return 1;
-
-    } else if((textInstructions = malloc(nptrs * sizeof *textInstructions)) == NULL) {
-
-        perror("malloc error");
-
-        exit (EXIT_FAILURE);
-
-    }
-
-    while(fgets(buffer, MAX_CHARACTERS, fp)) {
-
-        int size;
-
-        buffer[(size = strcspn (buffer, "\n"))] = 0;
-
-        if(textInstructionsSize == nptrs) {
-
-            void *tmp = realloc(textInstructions, (2 * nptrs) * sizeof *textInstructions);
-
-            if(!tmp) {
-
-                perror ("realloc error");
-
-                break;
-            }
-
-            textInstructions = tmp;
-
-            nptrs *= 2;
-        }
-
-        if(!(textInstructions[textInstructionsSize] = malloc(size + 1))) {
-
-            perror ("malloc error");
-
-            break;
-        }
-
-        memcpy(textInstructions[textInstructionsSize], buffer, size + 1);
-
-        textInstructionsSize += 1;
-
-    }
-
-    if(fp != stdin) {
-
-        fclose (fp);
-
-    }
-
-
-    // -------------------------------------------------------------------------
-
-    // reading data file
-    char **dataInstructionsAux;
-
-    nptrs = NUMBER_POINTERS;
-
-    int dataInstructionsSize = 0;
-
-    file = "pongData.txt";
-
-    fp = fopen(file, "r");
-
-    if(!fp) {
-
-        perror("data file open failed");
-
-        return 1;
-
-    } else if((dataInstructionsAux = malloc(nptrs * sizeof *dataInstructionsAux)) == NULL) {
-
-        perror("malloc error");
-
-        exit(EXIT_FAILURE);
-
-    }
-
-    while(fgets(buffer, MAX_CHARACTERS, fp)) {
-
-        int size;
-
-        buffer[(size = strcspn (buffer, "\n"))] = 0;
-
-        if(dataInstructionsSize == nptrs) {
-
-            void *tmp = realloc(dataInstructionsAux, (2 * nptrs) * sizeof *dataInstructionsAux);
-
-            if(!tmp) {
-
-                perror ("realloc error");
-
-                break;
-
-            }
-
-            dataInstructionsAux = tmp;
-
-            nptrs *= 2;
-
-        }
-
-        if(!(dataInstructionsAux[dataInstructionsSize] = malloc(size + 1))) {
-
-            perror ("malloc error");
-
-            break;
-
-        }
-
-        memcpy(dataInstructionsAux[dataInstructionsSize], buffer, size + 1);
-
-        dataInstructionsSize += 1;
-
-    }
-
-    if(fp != stdin) {
-
-        fclose (fp);
-
-    }
-
-    dataInstructions = malloc(dataInstructionsSize);
-
-    convertDataInstructions(dataInstructionsAux, dataInstructionsSize);
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------
-
-
-
-    // creating memory array
-    memory = malloc(MEMORY_SIZE * sizeof(int));
-
-    // global pointer must be positioned at the start of the memory array
-    registers[DYNAMIC_DATA_POINTER_POSITION] = 0;
-
-    // stack pointer must be positioned at the end of the memory array
-    registers[STACK_POINTER_POSITION] = 1999;
-
-
-
-
-
-
-    // ------------------------------------------------------------------
-
-    // text instructions execution
-    while(pc < textInstructionsSize) {
-
-        char *instruction;
-
-        instruction = textInstructions[pc];
-
-        char opcode[OPCODE_LENGHT];
-
-        // getting opcode from instruction
-        for(int i = 0; i < OPCODE_LENGHT; i++) {
-
-            opcode[i] = instruction[i];
-
-        }
-
-        // R instruction
-        if(strcmp(opcode, "000000") == 0) {
-
-            printf ("Type R\n");
-            printf ("pc = %d\n", pc);
-
-            instructionR(instruction);
-
-        // J instruction
-        } else if(strcmp(opcode, "000010") == 0 || strcmp(opcode, "000011") == 0) {
-
-            printf ("Type J\n");
-            printf ("pc = %d\n", pc);
-
-            instructionJ(instruction);
-
-        // I instruction
-        } else {
-
-            printf ("Type I\n");
-            printf ("pc = %d\n", pc);
-
-            instructionI(instruction);
-
-        }
-
-        // reset $zero
-        registers[0] = 0;
-
-        pc++;
-
-
-
-
-        if(pc > 1) {
-
-            pc = 4444;
-
-        }
-
-
-
-
-
-        int testInteger;
-        //printf("Continue:");
-        scanf("%d", &testInteger);
-        printf("\n");
-
-
-    }
-
-
-    // free memory
-    for (size_t i = 0; i < textInstructionsSize; i++) {
-
-        free(textInstructions[i]);
-
-    }
-    */
-
     free(textInstructions);
-
-    /*
-    // free memory
-    for (size_t i = 0; i < dataInstructionsSize; i++) {
-
-        free(dataInstructionsAux[i]);
-
-    }
-    */
 
     free(dataInstructionsAux);
 
@@ -2818,549 +2144,6 @@ int main (int argc, char **argv) {
 
     free(memory);
 
-    //free(stack);
-
-    //free(dynamicData);
-
     return 0;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-/*
-
-
-
-
-    pc = 592
-    Type I
-    opcode = 001101 (13)
-    rs = 00001U (1) ($at)
-    rt = 00001 (1) ($at)
-    immediate = 0000000000000000 (-1)
-    ori
-
-    Continue:
-
-    pc = 593
-    Type R
-    opcode = 000000 (0)
-    rs = 01100 (12) ($t4)
-    rt = 00001 (1) ($at)
-    rd = 01100 (12) ($t4)
-    shamt = 00000 (0)
-    funct = 100110 (38)
-    xori
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    7fff fffc => 2147483644
-
-    1000 8000h => 268468224
-
-    2147483644 - 268468224 = 1879015420
-
-    1879015420 / 4 = 469753855
-
-
-
-    000011 00000100000000001001010110
-
-    1049174 / 4 = 262293
-
-
-
-    000001 00000000000000000000 => j NewGame
-
-    000001 00000000001001010110 => j ClearBoard
-
-    000001 00000000001011000010 => j Reset
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    lw $t4, yDir
-    xori $t4, $t4, 0xffffffff
-    addi $t4, $t4, 1
-    sw $t4, yDir
-
-
-
-
-
-    Type I
-    pc = 589
-    opcode = 001111
-    rs = 00000
-    rt = 00001
-    immediate = 0001000000000001
-    lui => X
-
-    Type I
-    pc = 590
-    opcode = 100011
-    rs = 00001
-    rt = 01100
-    immediate = 0000000000001000
-    lw => lw $t4, yDir
-
-    Type I
-    pc = 591
-    opcode = 001111
-    rs = 00000
-    rt = 00001
-    immediate = 1111111111111111
-    lui => X
-
-
-
-
-    xori $t4, $t4, 0xffffffff
-
-    Type I
-    pc = 592
-    opcode = 001101 => Type I
-    rs = 00001 => $at
-    rt = 00001 => $at
-    immediate = 1111111111111111 => ffff
-    ori =>
-
-    Type R
-    pc = 593
-    opcode = 000000 => Type R
-    rs = 01100 => $t4
-    rt = 00001 => $at
-    rd = 01100 => $t4
-    shamt = 00000 => X
-    funct = 100110 => 26 hex
-
-
-
-
-
-
-    Type I
-    pc = 594
-    opcode = 001000
-    rs = 01100
-    rt = 01100
-    immediate = 0000000000000001
-    addi
-
-    Type I
-    pc = 595
-    opcode = 001111
-    rs = 00000
-    rt = 00001
-    immediate = 0001000000000001
-    lui
-
-    Type I
-    pc = 596
-    opcode = 101011
-    rs = 00001
-    rt = 01100
-    immediate = 0000000000001000
-    sw
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    #include <stdio.h>
-    #include <stdlib.h>
-
-    char *decimal_to_binary(int);
-
-    int main()
-    {
-      int n;
-      char *p;
-
-      printf("Enter an integer in decimal number system\n");
-      scanf("%d", &n);
-
-      p = decimal_to_binary(n);
-      printf("Binary string of %d is: %s\n", n, p);
-
-      free(p);
-
-      return 0;
-    }
-
-    char *decimal_to_binary(int n)
-    {
-      int c, d, t;
-      char *p;
-
-      t = 0;
-      p = (char*)malloc(32+1);
-
-      if (p == NULL)
-        exit(EXIT_FAILURE);
-
-      for (c = 31 ; c >= 0 ; c--)
-      {
-        d = n >> c;
-
-        if (d & 1)
-          *(p+t) = 1 + '0';
-        else
-          *(p+t) = 0 + '0';
-
-        t++;
-      }
-      *(p+t) = '\0';
-
-      return  p;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    Type I
-    pc = 704
-    opcode = 000100 (4)
-    rs = 01000 (8)
-    rt = 00000 (0)
-    immediate = 1111111111111010 (65530)
-    beq
-
-    immediate = 1111111111111010 (65530)
-                0000000000000101
-                               1
-                0000000000000110
-
-
-
-
-
-
-    Type I
-    pc = 646
-    opcode = 000101 (5)
-    rs = 00001 (1)
-    rt = 01000 (8)
-    immediate = 0000000000001101 (13)
-    bne
-
-
-
-
-
-
-    100011 00001 01001 0000000000000100 => lw $t1, 0xFFFF0004
-    001000 00000 00001 0000000000110001 => addi $at, $zero, 49 => ??????????
-    000100 00001 01001 0000000000000110 => beq $t1, 0x00000031, SetOnePlayerMode
-    001000 00000 00001 0000000000110010 => addi $at, $zero, 50 => ??????????
-    000100 00001 01001 0000000000000110 => beq $t1, 0x00000032, SetTwoPlayerMode
-    001001 00000 00100 0000000011111010 => li $a0, 250
-    001001 00000 00010 0000000000100000 => li $v0, 32
-    000000 00000 00000 0000000000001100   => syscall
-    000010 00000100000000000011010010   => j SelectMode
-    001001 00000 01001 0000000000000001 => li $t1, 1
-    000010 00000100000000000011011111   => j BeginGame
-    001001 00000 01001 0000000000000010 => li $t1, 2
-
-    000000 00000 00000 00000 00000 001100 => syscall ====> 269
-    000000 00000 10110 00100 00000 100001 => addu o move
-    000000 00000 10111 00101 00000 100001 => addu o move
-    000011 00000100000000000111100010     => jal
-    000011 00000100000000000110011000     => jal
-    001001 00000 00100 0000000000001101   => addiu o li
-    000000 00000 10100 00101 00000 100001 => addu o move
-    001111 00000 00001 0001000000000001   => lui -------
-    100011 00001 00110 0000000000100000   => lw
-    000000 00000 10000 00111 00000 100001 => addu o move
-    000011 00000100000000000101000111     => jal
-    000000 00000 00101 10100 00000 100001 => addu o move
-    000000 00000 00111 10000 00000 100001 => addu o move
-    001001 00000 00100 0000000000110010   => addiu o li
-    000000 00000 10101 00101 00000 100001 => addu o move
-    001111 00000 00001 0001000000000001   => lui ------
-    100011 00001 00110 0000000000100100   => lw =======> 285
-
-
-
-
-
-    xori $t4, $t4, 0xffffffff
-
-    Type I
-    pc = 592
-    opcode = 001101 => Type I
-    rs = 00001 => $at
-    rt = 00001 => $at
-    immediate = 1111111111111111 => ffff
-    ori =>
-
-    Type R
-    pc = 593
-    opcode = 000000 => Type R
-    rs = 01100 => $t4
-    rt = 00001 => $at
-    rd = 01100 => $t4
-    shamt = 00000 => X
-    funct = 100110 => 26 hex => 38 dec
-
-
-
-
-
-
-    101011 00001 00000 0000000000000000
-    sw $zero, 0xFFFF0000 => 323
-    NO HACE NACE NADA
-
-    sw $t1, mode
-    101011 00001 01001 0000000000110100
-    sw     $at   $t1   52
-
-
-
-
-
-
-
-
-    xori $t4, $t4, 0xffffffff
-
-    Type I
-    pc = 592
-    opcode = 001101 => Type I
-    rs = 00001 => $at
-    rt = 00001 => $at
-    immediate = 1111111111111111 => ffff
-    ori =>
-
-    Type R
-    pc = 593
-    opcode = 000000 => Type R
-    rs = 01100 => $t4
-    rt = 00001 => $at
-    rd = 01100 => $t4
-    shamt = 00000 => X
-    funct = 100110 => 26 hex => 38 dec
-
-
-
-
-
-
-        rt     rs
-    sw $ra, 0($sp)
-
-    101011 11101 11111 0000000000000000
-    opcode rs    rt    immediate
-
-
-
-
-
-
-
-
-
-
-    xori $t4, $t4, 0xffffffff
-
-    Type I
-    pc = 592
-    opcode = 001101 => Type I
-    rs = 00001 => $at
-    rt = 00001 => $at
-    immediate = 1111111111111111 => ffff
-    ori =>
-
-    Type R
-    pc = 593
-    opcode = 000000 => Type R
-    rs = 01100 => $t4
-    rt = 00001 => $at
-    rd = 01100 => $t4
-    shamt = 00000 => X
-    funct = 100110 => 26 hex => 38 dec
-
-
-
-
-
-
-
-
-
-    lw $ra, 0($sp)
-
-    100011 11101 11111 0000000000000000
-    opcode rs    rt    immediate
-
-
-
-
-
-    Type R
-    pc = 701
-    opcode = 000000 (0)
-    rs = 00000 (0)
-    rt = 00000 (0)
-    rd = 00000 (0)
-    shamt = 00000 (0)
-    funct = 001100 (12)
-    syscall
-
-
-
-
-
-
-
-
-
-
-
-
-# $a0 contains x position, $a1 contains y position, $a2 contains the color
-DrawPoint:
-		sll $t0, $a1, 6   # multiply y-coordinate by 64 (length of the field)
-		addu $v0, $a0, $t0
-		sll $v0, $v0, 2
-		addu $v0, $v0, $gp
-		sw $a2, ($v0)		# draw the color to the location
-
-		jr $ra
-
-
-
-
-# $a0 contains the paddles x position
-# $a1 contains paddles y-top position
-# $a2 contains paddle color
-# $a3 contains the direction
-# $t0 is the loop counter
-# $t1 is the current y coordinate, the x coordinate does not change
-# after completed $a1 "returns" aka has stored the new y-top position, $a3 "returns" the direction
-# careful to make sure nothing inbetween alters these  $a registers
-DrawPaddle:
-	# objective: look at the direction, draw a point on the correct side, erase a point on the correct side
-	beq $a3, 0x02000000, down
-	bne $a3, 0x01000000, NoMove
-
-	...
-
-	NoMove:
-		# else do nothing, make sure the direction is nothing
-		li $a3, 0
-	Move:
-		li $t0, 6
-	StartPLoop:
-		subi $t0, $t0, 1
-		addu $t1, $a1, $t0
-
-		# Converts to memory address
-		sll $t1, $t1, 6   # multiply y-coordinate by 64 (length of the field)
-		addu $v0, $a0, $t1
-		sll $v0, $v0, 2
-		addu $v0, $v0, $gp
-
-		sw $a2, ($v0)
-		beqz $t0, EndPLoop
-		j StartPLoop
-	EndPLoop:
-		jr $ra
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*/

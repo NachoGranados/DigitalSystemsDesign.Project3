@@ -1378,16 +1378,7 @@ void instructionR(char *instruction) {
             printf("registers[rs] = %d\n", registers[rs]);
             printf("registers[rt] = %d\n", registers[rt]);
 
-            // register $s2
-            if(rs == 18) {
-
-                registers[rd] = registers[rs] - rt;
-
-            } else {
-
-                sub(rs, rt, rd);
-
-            }
+            sub(rs, rt, rd);
 
             printf("registers[rd] = %d\n", registers[rd]);
 
@@ -2411,18 +2402,6 @@ int main (int argc, char **argv) {
 
 
 
-
-
-
-
-
-                            /*
-
-                            char flag;
-                            printf("Continue:");
-                            scanf("%c", &flag);
-                            printf("\n");
-                            */
 
 
 

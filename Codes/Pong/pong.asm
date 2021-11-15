@@ -522,7 +522,7 @@ DrawScore:
    		li $a1, 3
    		jal DrawPoint
 
-   		addi $s2, $s2 -1
+   		addi $s2, $s2, -1
 
    		bge $s2, 6, DrawScoreRow2
 

@@ -714,49 +714,6 @@ void move(int rt, int rd) {
 
 }
 
-/*
-void xori(int rs, int rt, int rd) {
-
-    if(registers[rs] == registers[rt]) {
-
-        registers[rd] = 0;
-
-    } else {
-
-        registers[rd] = 1;
-
-    }
-
-
-}
-
-*/
-
-/*
-
-
-        pc = 592
-        Type I
-        opcode = 001101 (13)
-        rs = 00001U (1) ($at)
-        rt = 00001 (1) ($at)
-        immediate = 0000000000000000 (-1)
-        ori
-
-        Continue:
-
-        pc = 593
-        Type R
-        opcode = 000000 (0)
-        rs = 01100 (12) ($t4)
-        rt = 00001 (1) ($at)
-        rd = 01100 (12) ($t4)
-        shamt = 00000 (0)
-        funct = 100110 (38)
-        xori
-
-*/
-
 void xori(int rs, int rt, int rd) {
 
     int aux = registers[rs] ^ registers[rt];
@@ -764,19 +721,6 @@ void xori(int rs, int rt, int rd) {
     registers[rd] = aux;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 void getRGB(int *rgbArray, int colorDecimal) {
 
@@ -1473,7 +1417,6 @@ void instructionR(char *instruction) {
 
             break;
 
-        // aux method for ori
         case 38:
 
             printf("%s\n", "xori");
@@ -1910,6 +1853,14 @@ void instructionI(char *instruction) {
 
                 keyPressed = NO_KEY;
 
+
+            // reset
+            } else if((pc == 707) | (pc == 709)) {
+
+                immediate /= 4;
+
+                dataInstructions[immediate] = registers[rt];
+
             // cannot overwrite register $zero
             } else if(rt != 0) {
 
@@ -2079,13 +2030,10 @@ void showPixels(SDL_Renderer *renderer, SDL_Rect *pixelArray, int arraySize) {
 
 int main (int argc, char **argv) {
 
-
-
-
     /*
 
     // a = 5(00000101), b = 9(00001001)
-    int a = 5, b = 5;
+    int a = 5, b = 9;
 
     // The result is 00000001
     printf("a = %d, b = %d\n", a, b);
@@ -2109,6 +2057,8 @@ int main (int argc, char **argv) {
     return 0;
 
     */
+
+
 
 
 
@@ -2546,8 +2496,7 @@ int main (int argc, char **argv) {
 
                         }
 
-
-
+                        initRunning = 0;
 
                     }
 

@@ -52,10 +52,10 @@ const int PIXEL_ARRAY_COLUMN_SIZE = 64;
 const int NO_KEY = 0;
 const int KEY_1 = 1;
 const int KEY_2 = 2;
-const int KEY_A = 3;
-const int KEY_Z = 4;
-const int KEY_K = 5;
-const int KEY_M = 6;
+const int KEY_A = 97;
+const int KEY_Z = 122;
+const int KEY_K = 107;
+const int KEY_M = 109;
 
 // Movement constants
 const int NO_MOVE = 0;
@@ -1580,8 +1580,6 @@ void instructionI(char *instruction) {
                     // register $t1
                     registers[9] = 1;
 
-                    keyPressed = NO_KEY;
-
                 }
 
             }
@@ -1659,24 +1657,16 @@ void instructionI(char *instruction) {
             printf("%s\n", "ori");
 
             // 0x01000000
-            if(pc == 305) {
+            if((pc == 305) | (pc ==331) |
+               (pc == 464) | (pc == 474)) {
 
                 li(rt, UP);
 
             // 0x02000000
-            } else if(pc == 308) {
+            } else if((pc == 308) | (pc == 328) |
+                      (pc == 469) | (pc == 479)) {
 
                 li(rt, DOWN);
-
-            // 0x02000000
-            } else if(pc == 328) {
-
-                li(rt, DOWN);
-
-            // 0x01000000
-            } else if(pc == 331) {
-
-                li(rt, UP);
 
             } else {
 
@@ -1716,6 +1706,11 @@ void instructionI(char *instruction) {
 
                     // register $t1
                     registers[9] = -1;
+
+                } else if(pc == 460) {
+
+                    // register $t1
+                    registers[rt] = keyPressed;
 
                 } else {
 
@@ -1800,8 +1795,13 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "sw");
 
+            // clear button pressed
+            if(pc == 324) {
+
+                keyPressed = NO_KEY;
+
             // cannot overwrite register $zero
-            if(rt != 0) {
+            } else if(rt != 0) {
 
                 // data instruction
                 if(rs == 1) {
@@ -2166,6 +2166,8 @@ int main (int argc, char **argv) {
 
                                     keyPressed = KEY_1;
 
+                                    printf("KEY 1\n");
+
                                     // QUITAR
                                     //flag = 1;
 
@@ -2175,6 +2177,8 @@ int main (int argc, char **argv) {
 
                                     keyPressed = KEY_2;
 
+                                    printf("KEY 2\n");
+
                                     // QUITAR
                                     //flag = 1;
 
@@ -2182,6 +2186,8 @@ int main (int argc, char **argv) {
                                 } else if (event.key.keysym.sym == SDLK_a) {
 
                                     keyPressed = KEY_A;
+
+                                    printf("KEY A\n");
 
                                     // QUITAR
                                     flag = 1;
@@ -2191,6 +2197,8 @@ int main (int argc, char **argv) {
 
                                     keyPressed = KEY_Z;
 
+                                    printf("KEY Z\n");
+
                                     // QUITAR
                                     flag = 1;
 
@@ -2199,6 +2207,8 @@ int main (int argc, char **argv) {
 
                                     keyPressed = KEY_K;
 
+                                    printf("KEY K\n");
+
                                     // QUITAR
                                     flag = 1;
 
@@ -2206,6 +2216,8 @@ int main (int argc, char **argv) {
                                 } else if (event.key.keysym.sym == SDLK_m) {
 
                                     keyPressed = KEY_M;
+
+                                    printf("KEY M\n");
 
                                     // QUITAR
                                     flag = 1;
@@ -2287,6 +2299,9 @@ int main (int argc, char **argv) {
 
 
 
+
+
+
                             /*
 
                             char flag;
@@ -2295,6 +2310,8 @@ int main (int argc, char **argv) {
                             printf("\n");
 
                             */
+
+
 
 
 
@@ -2325,6 +2342,8 @@ int main (int argc, char **argv) {
                             }
 
                             */
+
+
 
 
 

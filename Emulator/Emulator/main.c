@@ -48,6 +48,27 @@ const int PIXEL_ARRAY_SIZE = 2048;
 const int PIXEL_ARRAY_ROW_SIZE = 32;
 const int PIXEL_ARRAY_COLUMN_SIZE = 64;
 
+// Key constants
+const int NO_KEY = 0;
+const int KEY_1 = 1;
+const int KEY_2 = 2;
+const int KEY_A = 3;
+const int KEY_Z = 4;
+const int KEY_K = 5;
+const int KEY_M = 6;
+
+// Movement constants
+const int NO_MOVE = 0;
+const int UP = 1;
+const int DOWN = 2;
+
+
+
+
+
+
+
+
 // Global variables
 int pc = -1;
 
@@ -1499,7 +1520,7 @@ void instructionI(char *instruction) {
             printf("registers[rt] = %d\n", registers[rt]);
 
             // key 1
-            if((keyPressed == 1) & ((pc >= 210) & (pc < 214))) {
+            if((keyPressed == KEY_1) & ((pc >= 210) & (pc < 214))) {
 
                 registers[9] = 49;
 
@@ -1509,20 +1530,20 @@ void instructionI(char *instruction) {
 
                 printf("pc = %d\n", pc);
 
-                printf("PAYER 1 MODE\n");
+                printf("PLAYER 1 MODE\n");
 
             // key 2
-            } else if((keyPressed == 2) & ((pc >= 214) & (pc < 218))) {
+            } else if((keyPressed == KEY_2) & ((pc >= 214) & (pc < 218))) {
 
                 registers[9] = 50;
 
                 beq(rs, rt, immediate);
 
-                keyPressed = 0;
+                keyPressed = NO_KEY;
 
                 printf("pc = %d\n", pc);
 
-                printf("PAYER 2 MODE\n");
+                printf("PLAYER 2 MODE\n");
 
             } else {
 
@@ -1553,17 +1574,13 @@ void instructionI(char *instruction) {
             if(rs == 9) {
 
                 // check if a key has been pressed
-                // 3 -> a
-                // 4 -> z
-                // 5 -> k
-                // 6 -> m
-                if((keyPressed == 3) | (keyPressed == 4) |
-                   (keyPressed == 5) | (keyPressed == 6)) {
+                if((keyPressed == KEY_A) | (keyPressed == KEY_Z) |
+                   (keyPressed == KEY_K) | (keyPressed == KEY_M)) {
 
                     // register $t1
                     registers[9] = 1;
 
-                    keyPressed = 0;
+                    keyPressed = NO_KEY;
 
                 }
 
@@ -1571,13 +1588,9 @@ void instructionI(char *instruction) {
 
 
             // QUITAR
-            flag = 1;
-
-
+            //flag = 1;
 
             blez(rs, immediate);
-
-
 
             break;
 
@@ -1645,7 +1658,31 @@ void instructionI(char *instruction) {
 
             printf("%s\n", "ori");
 
-            registers[rt] = immediate;
+            // 0x01000000
+            if(pc == 305) {
+
+                li(rt, UP);
+
+            // 0x02000000
+            } else if(pc == 308) {
+
+                li(rt, DOWN);
+
+            // 0x02000000
+            } else if(pc == 328) {
+
+                li(rt, DOWN);
+
+            // 0x01000000
+            } else if(pc == 331) {
+
+                li(rt, UP);
+
+            } else {
+
+                registers[rt] = immediate;
+
+            }
 
             break;
 
@@ -2079,7 +2116,7 @@ int main (int argc, char **argv) {
     // stack pointer must be positioned at the end of the memory array
     registers[STACK_POINTER_POSITION] = 2000;
 
-    keyPressed = 0;
+    keyPressed = NO_KEY;
 
     // Window creation
     SDL_Init(SDL_INIT_VIDEO);
@@ -2127,7 +2164,7 @@ int main (int argc, char **argv) {
                                 if ((event.key.keysym.sym == SDLK_1) |
                                     (event.key.keysym.sym == SDLK_KP_1)) {
 
-                                    keyPressed = 1;
+                                    keyPressed = KEY_1;
 
                                     // QUITAR
                                     //flag = 1;
@@ -2136,7 +2173,7 @@ int main (int argc, char **argv) {
                                 } else if ((event.key.keysym.sym == SDLK_2) |
                                            (event.key.keysym.sym == SDLK_KP_2)) {
 
-                                    keyPressed = 2;
+                                    keyPressed = KEY_2;
 
                                     // QUITAR
                                     //flag = 1;
@@ -2144,7 +2181,7 @@ int main (int argc, char **argv) {
                                 // key a pressed
                                 } else if (event.key.keysym.sym == SDLK_a) {
 
-                                    keyPressed = 3;
+                                    keyPressed = KEY_A;
 
                                     // QUITAR
                                     flag = 1;
@@ -2152,7 +2189,7 @@ int main (int argc, char **argv) {
                                 // key z pressed
                                 } else if (event.key.keysym.sym == SDLK_z) {
 
-                                    keyPressed = 4;
+                                    keyPressed = KEY_Z;
 
                                     // QUITAR
                                     flag = 1;
@@ -2160,7 +2197,7 @@ int main (int argc, char **argv) {
                                 // key k pressed
                                 } else if (event.key.keysym.sym == SDLK_k) {
 
-                                    keyPressed = 5;
+                                    keyPressed = KEY_K;
 
                                     // QUITAR
                                     flag = 1;
@@ -2168,7 +2205,7 @@ int main (int argc, char **argv) {
                                 // key m pressed
                                 } else if (event.key.keysym.sym == SDLK_m) {
 
-                                    keyPressed = 6;
+                                    keyPressed = KEY_M;
 
                                     // QUITAR
                                     flag = 1;
@@ -2263,6 +2300,21 @@ int main (int argc, char **argv) {
 
                             /*
 
+                            if(pc >= 310) {
+
+                                flag = 1;
+
+                            }
+
+                            */
+
+                            //flag = 1;
+
+
+
+
+                            /*
+
                             if(flag) {
 
                                 char flag;
@@ -2276,19 +2328,7 @@ int main (int argc, char **argv) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
                             /*
-
 
                             if(pc > 209) {
 
@@ -2300,6 +2340,8 @@ int main (int argc, char **argv) {
                             }
 
                             */
+
+
 
 
 

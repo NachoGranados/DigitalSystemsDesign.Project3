@@ -62,13 +62,6 @@ const int NO_MOVE = 0;
 const int UP = 1;
 const int DOWN = 2;
 
-
-
-
-
-
-
-
 // Global variables
 int pc = -1;
 
@@ -721,19 +714,69 @@ void move(int rt, int rd) {
 
 }
 
-void xori(int rs, int rt, int SignExtImm) {
+/*
+void xori(int rs, int rt, int rd) {
 
-    if(registers[rs] == SignExtImm) {
+    if(registers[rs] == registers[rt]) {
 
-        registers[rt] = 0;
+        registers[rd] = 0;
 
     } else {
 
-        registers[rt] = 1;
+        registers[rd] = 1;
 
     }
 
+
 }
+
+*/
+
+/*
+
+
+        pc = 592
+        Type I
+        opcode = 001101 (13)
+        rs = 00001U (1) ($at)
+        rt = 00001 (1) ($at)
+        immediate = 0000000000000000 (-1)
+        ori
+
+        Continue:
+
+        pc = 593
+        Type R
+        opcode = 000000 (0)
+        rs = 01100 (12) ($t4)
+        rt = 00001 (1) ($at)
+        rd = 01100 (12) ($t4)
+        shamt = 00000 (0)
+        funct = 100110 (38)
+        xori
+
+*/
+
+void xori(int rs, int rt, int rd) {
+
+    int aux = registers[rs] ^ registers[rt];
+
+    registers[rd] = aux;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void getRGB(int *rgbArray, int colorDecimal) {
 
@@ -1435,7 +1478,69 @@ void instructionR(char *instruction) {
 
             printf("%s\n", "xori");
 
-            ori(rs, rt, rd);
+            /*
+
+                pc = 592
+                Type I
+                opcode = 001101 (13)
+                rs = 00001U (1) ($at)
+                rt = 00001 (1) ($at)
+                immediate = 0000000000000000 (-1)
+                ori
+
+                Continue:
+
+                pc = 593
+                Type R
+                opcode = 000000 (0)
+                rs = 01100 (12) ($t4)
+                rt = 00001 (1) ($at)
+                rd = 01100 (12) ($t4)
+                shamt = 00000 (0)
+                funct = 100110 (38)
+                xori
+
+            */
+
+            /*
+
+            char tempRs[IMMEDIATE_LENGHT];
+
+            char tempRt[IMMEDIATE_LENGHT];
+
+            // negative number
+            if(registers[rs] < 0) {
+
+                decimalToBinary(registers[rs], tempRs);
+
+            } else if(registers[rt] < 0) {
+
+                decimalToBinary(registers[rt], tempRt);
+
+            }
+
+
+
+
+
+
+            if(isNegative(immediateChar) == 1) {
+
+                complement2(immediateChar, IMMEDIATE_LENGHT);
+
+                immediate = -1 * (binaryToDecimal(immediateChar, IMMEDIATE_LENGHT) + 1);
+
+            } else {
+
+                immediate = binaryToDecimal(immediateChar, IMMEDIATE_LENGHT);
+
+            }
+
+            */
+
+
+
+            xori(rs, rt, rd);
 
             break;
 
@@ -1673,6 +1778,11 @@ void instructionI(char *instruction) {
                 registers[rt] = immediate;
 
             }
+
+            // QUITAR
+            //printf("%s\n", "ORI ------------------------------");
+
+            //counter++;
 
             break;
 
@@ -1968,6 +2078,58 @@ void showPixels(SDL_Renderer *renderer, SDL_Rect *pixelArray, int arraySize) {
 }
 
 int main (int argc, char **argv) {
+
+
+
+
+    /*
+
+    // a = 5(00000101), b = 9(00001001)
+    int a = 5, b = 5;
+
+    // The result is 00000001
+    printf("a = %d, b = %d\n", a, b);
+    printf("a&b = %d\n", a & b);
+
+    // The result is 00001101
+    printf("a|b = %d\n", a | b);
+
+    // The result is 00001100
+    printf("a^b = %d\n", a ^ b);
+
+    // The result is 11111010
+    printf("~a = %d\n", a = ~a);
+
+    // The result is 00010010
+    printf("b<<1 = %d\n", b << 1);
+
+    // The result is 00000100
+    printf("b>>1 = %d\n", b >> 1);
+
+    return 0;
+
+    */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // reading text file
     char **textInstructions;
@@ -2302,14 +2464,19 @@ int main (int argc, char **argv) {
 
 
 
+
+
                             /*
 
                             char flag;
                             printf("Continue:");
                             scanf("%c", &flag);
                             printf("\n");
-
                             */
+
+
+
+
 
 
 
@@ -2330,6 +2497,7 @@ int main (int argc, char **argv) {
 
 
 
+
                             /*
 
                             if(flag) {
@@ -2342,6 +2510,8 @@ int main (int argc, char **argv) {
                             }
 
                             */
+
+
 
 
 
@@ -2365,7 +2535,8 @@ int main (int argc, char **argv) {
 
 
 
-
+                            // QUITAR
+                            //printf("counter = %d\n", counter);
 
 
 
@@ -2374,17 +2545,6 @@ int main (int argc, char **argv) {
 
 
                         }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2401,7 +2561,10 @@ int main (int argc, char **argv) {
 
 
 
+            // QUITAR
+            //printf("counter = %d", counter);
 
+            //initRunning = 0;
 
 
 
@@ -2425,6 +2588,14 @@ int main (int argc, char **argv) {
         SDL_RenderPresent(renderer);
 
     }
+
+
+
+
+
+
+
+
 
     // Free memory
     SDL_DestroyRenderer(renderer);
@@ -2746,6 +2917,49 @@ int main (int argc, char **argv) {
 }
 
 /*
+
+
+
+
+    pc = 592
+    Type I
+    opcode = 001101 (13)
+    rs = 00001U (1) ($at)
+    rt = 00001 (1) ($at)
+    immediate = 0000000000000000 (-1)
+    ori
+
+    Continue:
+
+    pc = 593
+    Type R
+    opcode = 000000 (0)
+    rs = 01100 (12) ($t4)
+    rt = 00001 (1) ($at)
+    rd = 01100 (12) ($t4)
+    shamt = 00000 (0)
+    funct = 100110 (38)
+    xori
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     7fff fffc => 2147483644
